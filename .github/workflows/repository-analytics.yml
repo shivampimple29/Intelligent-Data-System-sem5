@@ -1,0 +1,93 @@
+name: Automated Repository Analytics Dashboard
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '.github/analytics/**'
+      - 'README.md'
+  schedule:
+    # Runs daily at 01:17 UTC (06:47 AM IST)
+    - cron: '17 1 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: repository-analytics
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update-analytics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Collect Analytics & Generate Dashboard
+        env:
+          GH_TRAFFIC_STATS_TOKEN: ${{ secrets.GH_TRAFFIC_STATS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: |
+          python .github/scripts/update_analytics.py
+
+      - name: Validate Generated Analytics Artifacts
+        run: |
+          python -c "
+          import json, sys
+          from pathlib import Path
+
+          analytics_dir = Path('.github/analytics')
+          required_files = [
+              analytics_dir / 'traffic-history.json',
+              analytics_dir / 'activity-history.json',
+              analytics_dir / 'dashboard.json',
+              analytics_dir / 'traffic-chart.svg',
+              analytics_dir / 'shields' / 'total-clones.json',
+              analytics_dir / 'shields' / 'total-views.json',
+              analytics_dir / 'shields' / 'daily-unique-cloners.json',
+              analytics_dir / 'shields' / 'daily-unique-visitors.json',
+              analytics_dir / 'shields' / 'cumulative-clones.json',
+              analytics_dir / 'shields' / 'cumulative-views.json'
+          ]
+
+          for p in required_files:
+              if not p.exists():
+                  print(f'Error: Expected file {p} does not exist', file=sys.stderr)
+                  sys.exit(1)
+              if p.suffix == '.json':
+                  with open(p, 'r', encoding='utf-8') as f:
+                      json.load(f)
+              elif p.suffix == '.svg':
+                  content = p.read_text(encoding='utf-8')
+                  if '<svg' not in content or '</svg>' not in content:
+                      print(f'Error: Invalid SVG in {p}', file=sys.stderr)
+                      sys.exit(1)
+
+          print('All analytics artifacts validated successfully.')
+          "
+
+      - name: Commit and Push Generated Analytics
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/analytics/ README.md
+          if git diff --staged --quiet; then
+            echo "No analytics changes to commit."
+          else
+            git commit -m "chore(analytics): update repository traffic and metrics [skip ci]"
+            git pull --rebase origin main || true
+            git push origin main
+          fi

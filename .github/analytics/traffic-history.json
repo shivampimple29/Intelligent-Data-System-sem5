@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "collectionStartedAt": "2026-10-21T17:40:57.149807+00:00",
+  "lastSuccessfulUpdate": null,
+  "lastUpdateStatus": "uninitialized",
+  "notes": "Daily buckets follow GitHub API UTC 24h reporting periods. Summing daily uniques across multiple days does not equal distinct individuals across the period.",
+  "daily": {}
+}
