@@ -1,8 +1,8 @@
 {
   "repository": "shivampimple29/Intelligent-Data-System-sem5",
   "defaultBranch": "main",
-  "updatedAtUTC": "2026-10-21T17:50:34.471702+00:00",
-  "updatedAtIST": "2026-10-21 23:20:34 IST",
+  "updatedAtUTC": "2026-10-21T18:06:59.537625+00:00",
+  "updatedAtIST": "2026-10-21 23:36:59 IST",
   "trafficStatus": "token_required",
   "trafficMetrics": {
     "availableDaysCount": 0,
@@ -12,6 +12,8 @@
     "last5DaysRecords": [],
     "last5DaysTotalClones": 0,
     "last5DaysTotalViews": 0,
+    "last5DaysSumUniqueCloners": 0,
+    "last5DaysSumUniqueVisitors": 0,
     "last5DaysAvgUniqueClonersPerDay": 0.0,
     "last5DaysAvgUniqueVisitorsPerDay": 0.0,
     "previous5DaysDates": [],
@@ -26,124 +28,13 @@
     "collectionStartedAt": "2026-10-21T17:40:57.149807+00:00",
     "lastSuccessfulUpdate": null
   },
-  "growthMetrics": {
-    "stars": 0,
-    "forks": 1,
-    "openIssues": 0,
-    "openPullRequests": 0,
-    "publicForksLast5Days": 1,
-    "publicStarsLast5Days": 0
-  },
-  "recentEvents": [
+  "forksCount": 1,
+  "supporters": [
     {
-      "id": "commit-6be2a1559c7fa07a642dd093a32325b7d6486e14",
-      "type": "PushEvent",
-      "action": "Commit 📦",
-      "actor": "shivampimple29",
-      "actorUrl": "https://github.com/shivampimple29",
-      "timestamp": "2026-10-21T17:47:54Z",
-      "timestampIST": "2026-10-21 23:17 IST",
-      "description": "[`6be2a15`](https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/6be2a1559c7fa07a642dd093a32325b7d6486e14) feat(analytics): implement automated GitHub repository analytics dashboard",
-      "targetUrl": "https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/6be2a1559c7fa07a642dd093a32325b7d6486e14"
-    },
-    {
-      "id": "commit-3c9dc5631b0466498c707a740db9d9b3c14bf683",
-      "type": "PushEvent",
-      "action": "Commit 📦",
-      "actor": "shivampimple29",
-      "actorUrl": "https://github.com/shivampimple29",
-      "timestamp": "2026-10-21T17:45:47Z",
-      "timestampIST": "2026-10-21 23:15 IST",
-      "description": "[`3c9dc56`](https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/3c9dc5631b0466498c707a740db9d9b3c14bf683) Add Q11 Solution",
-      "targetUrl": "https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/3c9dc5631b0466498c707a740db9d9b3c14bf683"
-    },
-    {
-      "id": "commit-5c3cb496ecd7d4d971ceb33a780470d58f9d9ffc",
-      "type": "PushEvent",
-      "action": "Commit 📦",
-      "actor": "shivampimple29",
-      "actorUrl": "https://github.com/shivampimple29",
-      "timestamp": "2026-10-21T17:22:24Z",
-      "timestampIST": "2026-10-21 22:52 IST",
-      "description": "[`5c3cb49`](https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/5c3cb496ecd7d4d971ceb33a780470d58f9d9ffc) Add Q13 Solution",
-      "targetUrl": "https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/5c3cb496ecd7d4d971ceb33a780470d58f9d9ffc"
-    },
-    {
-      "id": "commit-382f19adbdc4f239f64383efb68232fa92a857f7",
-      "type": "PushEvent",
-      "action": "Commit 📦",
-      "actor": "shivampimple29",
-      "actorUrl": "https://github.com/shivampimple29",
-      "timestamp": "2026-10-21T15:54:50Z",
-      "timestampIST": "2026-10-21 21:24 IST",
-      "description": "[`382f19a`](https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/382f19adbdc4f239f64383efb68232fa92a857f7) Add Q12 Solution",
-      "targetUrl": "https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/382f19adbdc4f239f64383efb68232fa92a857f7"
-    },
-    {
-      "id": "commit-44b0d42b99b5d15a3979d156a216e9406353f6f2",
-      "type": "PushEvent",
-      "action": "Commit 📦",
-      "actor": "shivampimple29",
-      "actorUrl": "https://github.com/shivampimple29",
-      "timestamp": "2026-10-21T15:01:17Z",
-      "timestampIST": "2026-10-21 20:31 IST",
-      "description": "[`44b0d42`](https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/44b0d42b99b5d15a3979d156a216e9406353f6f2) Mock_Practical_Solutions/Q11.ipynb",
-      "targetUrl": "https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/44b0d42b99b5d15a3979d156a216e9406353f6f2"
-    },
-    {
-      "id": "fork-1427386964",
-      "type": "ForkEvent",
-      "action": "Public Fork 🍴",
-      "actor": "abhi220705",
-      "actorUrl": "https://github.com/abhi220705",
-      "timestamp": "2026-10-20T18:02:37Z",
-      "timestampIST": "2026-10-20 23:32 IST",
-      "description": "Forked repository to [abhi220705/Intelligent-Data-System-sem5](https://github.com/abhi220705/Intelligent-Data-System-sem5)",
-      "targetUrl": "https://github.com/abhi220705/Intelligent-Data-System-sem5"
-    },
-    {
-      "id": "commit-c292c698522ca982edbd5c546f97b4fe630fd07c",
-      "type": "PushEvent",
-      "action": "Commit 📦",
-      "actor": "shivampimple29",
-      "actorUrl": "https://github.com/shivampimple29",
-      "timestamp": "2026-10-20T17:30:32Z",
-      "timestampIST": "2026-10-20 23:00 IST",
-      "description": "[`c292c69`](https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/c292c698522ca982edbd5c546f97b4fe630fd07c) Add Q10 Solution",
-      "targetUrl": "https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/c292c698522ca982edbd5c546f97b4fe630fd07c"
-    },
-    {
-      "id": "commit-d1b5272f7f292f40ea3bd37c544b6fa61a0c5679",
-      "type": "PushEvent",
-      "action": "Commit 📦",
-      "actor": "shivampimple29",
-      "actorUrl": "https://github.com/shivampimple29",
-      "timestamp": "2026-10-20T16:44:39Z",
-      "timestampIST": "2026-10-20 22:14 IST",
-      "description": "[`d1b5272`](https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/d1b5272f7f292f40ea3bd37c544b6fa61a0c5679) Add Q9 Solution",
-      "targetUrl": "https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/d1b5272f7f292f40ea3bd37c544b6fa61a0c5679"
-    },
-    {
-      "id": "commit-0f9985ca92a3cc0015947fd416109a23be93c450",
-      "type": "PushEvent",
-      "action": "Commit 📦",
-      "actor": "shivampimple29",
-      "actorUrl": "https://github.com/shivampimple29",
-      "timestamp": "2026-10-20T15:30:02Z",
-      "timestampIST": "2026-10-20 21:00 IST",
-      "description": "[`0f9985c`](https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/0f9985ca92a3cc0015947fd416109a23be93c450) Add Q8 Solution",
-      "targetUrl": "https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/0f9985ca92a3cc0015947fd416109a23be93c450"
-    },
-    {
-      "id": "commit-7763efdbda83279561e9742a9ba12f3662cd1b68",
-      "type": "PushEvent",
-      "action": "Commit 📦",
-      "actor": "shivampimple29",
-      "actorUrl": "https://github.com/shivampimple29",
-      "timestamp": "2026-10-20T14:50:23Z",
-      "timestampIST": "2026-10-20 20:20 IST",
-      "description": "[`7763efd`](https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/7763efdbda83279561e9742a9ba12f3662cd1b68) Add Q7 Solution",
-      "targetUrl": "https://github.com/shivampimple29/Intelligent-Data-System-sem5/commit/7763efdbda83279561e9742a9ba12f3662cd1b68"
+      "username": "abhi220705",
+      "profileUrl": "https://github.com/abhi220705",
+      "avatarUrl": "https://github.com/abhi220705.png?size=96",
+      "role": "Community Fork"
     }
   ]
 }

@@ -1,37 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 280" width="100%" height="auto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 125" width="100%" height="auto">
   <defs>
     <style>
-      .title { font: 600 15px -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif; fill: #1e293b; }
-      .subtitle { font: 400 11px -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif; fill: #64748b; }
-      .legend-text { font: 500 12px -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif; fill: #334155; }
+      .card-bg { fill: #ffffff; stroke: #d0d7de; stroke-width: 1; }
+      .title-text { font: 600 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #656d76; letter-spacing: 0.5px; }
+      .legend-text { font: 500 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #656d76; }
+      .axis-label { font: 500 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #8c959f; }
+      .count-label { font: 600 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #1f2328; }
+      .empty-text { font: 400 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #8c959f; }
+      .baseline { stroke: #eaecef; stroke-width: 1; }
+      @media (prefers-color-scheme: dark) {
+        .card-bg { fill: #0d1117; stroke: #30363d; }
+        .title-text { fill: #8b949e; }
+        .legend-text { fill: #8b949e; }
+        .axis-label { fill: #6e7681; }
+        .count-label { fill: #f0f6fc; }
+        .empty-text { fill: #6e7681; }
+        .baseline { stroke: #21262d; }
+      }
     </style>
   </defs>
 
-  <!-- Card Background -->
-  <rect width="760" height="280" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <rect width="820" height="125" rx="8" class="card-bg"/>
 
-  <!-- Chart Header -->
-  <text x="24" y="32" class="title">Daily Traffic Trends (Rolling 5-Day Window)</text>
-  <text x="24" y="48" class="subtitle">Official GitHub Traffic API (UTC 24h Buckets)</text>
+  <text x="24" y="24" class="title-text">5-DAY TRAFFIC TREND</text>
 
-  <!-- Legend -->
-  <g transform="translate(520, 24)">
-    <rect x="0" y="2" width="12" height="12" rx="2" fill="#2563eb"/>
-    <text x="18" y="12" class="legend-text">Page Views</text>
-    <rect x="105" y="2" width="12" height="12" rx="2" fill="#8b5cf6"/>
-    <text x="123" y="12" class="legend-text">Git Clones</text>
+  <g>
+    <circle cx="710" cy="20" r="4" fill="#0969da"/>
+    <text x="720" y="24" class="legend-text">Views</text>
+    <circle cx="765" cy="20" r="4" fill="#8250df"/>
+    <text x="775" y="24" class="legend-text">Clones</text>
   </g>
 
-  <!-- Grid & Axes -->
-  <g>
-    <line x1="60" y1="230.0" x2="730" y2="230.0" stroke="#e2e8f0" stroke-dasharray="4" stroke-width="1"/><text x="50" y="234.0" font-size="11" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" fill="#64748b" text-anchor="end">0</text><line x1="60" y1="145.0" x2="730" y2="145.0" stroke="#e2e8f0" stroke-dasharray="4" stroke-width="1"/><text x="50" y="149.0" font-size="11" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" fill="#64748b" text-anchor="end">2.5</text><line x1="60" y1="60.0" x2="730" y2="60.0" stroke="#e2e8f0" stroke-dasharray="4" stroke-width="1"/><text x="50" y="64.0" font-size="11" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" fill="#64748b" text-anchor="end">5</text>
-    <!-- Base Axis -->
-    <line x1="60" y1="230" x2="730" y2="230" stroke="#cbd5e1" stroke-width="1.5"/>
-  </g>
+  <line x1="24" y1="88" x2="796" y2="88" class="baseline"/>
 
-  <!-- Bars & Labels -->
   <g>
-    
-    <text x="380.0" y="145.0" text-anchor="middle" font-size="14" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" fill="#94a3b8">Awaiting initial traffic data points from GitHub API</text>
+    <text x="410" y="66" text-anchor="middle" class="empty-text">5-day rolling traffic trendline will display here as daily activity occurs</text>
   </g>
 </svg>

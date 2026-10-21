@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "label": "avg daily visitors",
-  "message": "0.0/day",
+  "label": "5-day unique visitors",
+  "message": "0",
   "color": "informational"
 }

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 125" width="100%" height="auto">
+  <defs>
+    <style>
+      .card-bg { fill: #ffffff; stroke: #d0d7de; stroke-width: 1; }
+      .title-text { font: 600 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #656d76; letter-spacing: 0.5px; }
+      .legend-text { font: 500 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #656d76; }
+      .axis-label { font: 500 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #8c959f; }
+      .count-label { font: 600 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #1f2328; }
+      .empty-text { font: 400 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #8c959f; }
+      .baseline { stroke: #eaecef; stroke-width: 1; }
+      @media (prefers-color-scheme: dark) {
+        .card-bg { fill: #0d1117; stroke: #30363d; }
+        .title-text { fill: #8b949e; }
+        .legend-text { fill: #8b949e; }
+        .axis-label { fill: #6e7681; }
+        .count-label { fill: #f0f6fc; }
+        .empty-text { fill: #6e7681; }
+        .baseline { stroke: #21262d; }
+      }
+    </style>
+  </defs>
+
+  <rect width="820" height="125" rx="8" class="card-bg"/>
+
+  <text x="24" y="24" class="title-text">5-DAY TRAFFIC TREND</text>
+
+  <g>
+    <circle cx="710" cy="20" r="4" fill="#0969da"/>
+    <text x="720" y="24" class="legend-text">Views</text>
+    <circle cx="765" cy="20" r="4" fill="#8250df"/>
+    <text x="775" y="24" class="legend-text">Clones</text>
+  </g>
+
+  <line x1="24" y1="88" x2="796" y2="88" class="baseline"/>
+
+  <g>
+    <text x="410" y="66" text-anchor="middle" class="empty-text">5-day rolling traffic trendline will display here as daily activity occurs</text>
+  </g>
+</svg>

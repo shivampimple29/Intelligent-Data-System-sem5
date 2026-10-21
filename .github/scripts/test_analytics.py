@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Comprehensive Unit & Integration Test Suite for Analytics Dashboard
-Tests all 17 requirements specified in the project specification.
+Tests all 17 requirements specified in the project specification,
+including the redesigned visual layout, Hall of Appreciation, and copyright removal.
 """
 
 import json
@@ -14,7 +15,6 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-# Import functions from update_analytics
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -30,8 +30,10 @@ from update_analytics import (
     compute_traffic_metrics,
     initialize_activity_history,
     merge_activity_events,
+    generate_metrics_card_svg,
     generate_svg_chart,
     generate_shields_badges,
+    render_hall_of_appreciation,
     render_dashboard_markdown,
     update_readme_content,
     parse_iso_datetime,
@@ -72,7 +74,6 @@ class TestAnalyticsDashboard(unittest.TestCase):
         merge_traffic_data(history, {"clones": [{"timestamp": "2026-10-19T00:00:00Z", "count": 4, "uniques": 2}]}, None, "2026-10-19T10:00:00Z")
         self.assertEqual(len(history["daily"]), 1)
 
-        # Next day update
         merge_traffic_data(history, {"clones": [{"timestamp": "2026-10-20T00:00:00Z", "count": 7, "uniques": 3}]}, None, "2026-10-20T10:00:00Z")
         self.assertEqual(len(history["daily"]), 2)
         self.assertEqual(history["daily"]["2026-10-19"]["clones"], 4)
@@ -83,11 +84,9 @@ class TestAnalyticsDashboard(unittest.TestCase):
         history = initialize_traffic_history()
         payload = {"clones": [{"timestamp": "2026-10-20T00:00:00Z", "count": 10, "uniques": 4}]}
 
-        # First run
         merge_traffic_data(history, payload, None, "2026-10-20T10:00:00Z")
         self.assertEqual(history["daily"]["2026-10-20"]["clones"], 10)
 
-        # Re-run same day with same data
         merge_traffic_data(history, payload, None, "2026-10-20T15:00:00Z")
         self.assertEqual(history["daily"]["2026-10-20"]["clones"], 10)
         self.assertEqual(len(history["daily"]), 1)
@@ -97,7 +96,6 @@ class TestAnalyticsDashboard(unittest.TestCase):
         history = initialize_traffic_history()
         merge_traffic_data(history, {"clones": [{"timestamp": "2026-10-18T00:00:00Z", "count": 5, "uniques": 2}]}, None, "2026-10-18T10:00:00Z")
 
-        # GitHub later revises Oct 18 count to 9
         merge_traffic_data(history, {"clones": [{"timestamp": "2026-10-18T00:00:00Z", "count": 9, "uniques": 4}]}, None, "2026-10-19T10:00:00Z")
         self.assertEqual(history["daily"]["2026-10-18"]["clones"], 9)
         self.assertEqual(history["daily"]["2026-10-18"]["uniqueCloners"], 4)
@@ -107,7 +105,6 @@ class TestAnalyticsDashboard(unittest.TestCase):
         history = initialize_traffic_history()
         history["daily"] = {
             "2026-10-16": {"clones": 2, "uniqueCloners": 1, "views": 5, "uniqueVisitors": 3},
-            # 2026-10-17 is missing
             "2026-10-18": {"clones": 4, "uniqueCloners": 2, "views": 10, "uniqueVisitors": 5},
         }
         metrics = compute_traffic_metrics(history)
@@ -126,7 +123,6 @@ class TestAnalyticsDashboard(unittest.TestCase):
         mock_response.__enter__.return_value = mock_response
         mock_response.__exit__.return_value = None
 
-        # Fail once with 500, then succeed
         with patch("urllib.request.urlopen") as mock_urlopen:
             mock_err = urllib.error.HTTPError("http://api", 500, "Server Error", {}, None)
             mock_err.read = MagicMock(return_value=b'{"error": "temp"}')
@@ -145,7 +141,6 @@ class TestAnalyticsDashboard(unittest.TestCase):
 
         data = safe_load_json(corrupt_file, initialize_traffic_history)
         self.assertEqual(data["schemaVersion"], 1)
-        # Verify corrupt file was preserved as backup
         backups = list(self.test_path.glob("corrupt.json.corrupt-*"))
         self.assertEqual(len(backups), 1)
 
@@ -155,14 +150,11 @@ class TestAnalyticsDashboard(unittest.TestCase):
         history["daily"] = {
             "2026-10-19": {"clones": 15, "uniqueCloners": 5, "views": 40, "uniqueVisitors": 12}
         }
-        # Clones fail (None), Views succeed
         views_payload = {"views": [{"timestamp": "2026-10-20T00:00:00Z", "count": 25, "uniques": 8}]}
         updated = merge_traffic_data(history, None, views_payload, "2026-10-20T12:00:00Z")
 
         self.assertTrue(updated)
-        # Previous clones data MUST NOT be erased
         self.assertEqual(history["daily"]["2026-10-19"]["clones"], 15)
-        # New views data is recorded
         self.assertEqual(history["daily"]["2026-10-20"]["views"], 25)
 
     def test_09_five_day_aggregation(self):
@@ -172,24 +164,22 @@ class TestAnalyticsDashboard(unittest.TestCase):
             d_str = f"2026-10-0{i}"
             history["daily"][d_str] = {
                 "clones": i * 2,          # 2, 4, 6, 8, 10 -> sum = 30
-                "uniqueCloners": i,       # 1, 2, 3, 4, 5  -> avg = 3.0
+                "uniqueCloners": i,       # 1, 2, 3, 4, 5  -> sum = 15
                 "views": i * 10,          # 10, 20, 30, 40, 50 -> sum = 150
-                "uniqueVisitors": i * 2,  # 2, 4, 6, 8, 10 -> avg = 6.0
+                "uniqueVisitors": i * 2,  # 2, 4, 6, 8, 10 -> sum = 30
             }
         metrics = compute_traffic_metrics(history)
         self.assertEqual(metrics["last5DaysTotalClones"], 30)
         self.assertEqual(metrics["last5DaysTotalViews"], 150)
-        self.assertEqual(metrics["last5DaysAvgUniqueClonersPerDay"], 3.0)
-        self.assertEqual(metrics["last5DaysAvgUniqueVisitorsPerDay"], 6.0)
+        self.assertEqual(metrics["last5DaysSumUniqueCloners"], 15)
+        self.assertEqual(metrics["last5DaysSumUniqueVisitors"], 30)
         self.assertTrue(metrics["isWindowComplete"])
 
     def test_10_previous_five_day_comparison(self):
         """10. Previous 5-day comparison and growth calculation."""
         history = initialize_traffic_history()
-        # Days 1 to 5: previous period (clones=10, views=50)
         for i in range(1, 6):
             history["daily"][f"2026-10-0{i}"] = {"clones": 2, "uniqueCloners": 1, "views": 10, "uniqueVisitors": 5}
-        # Days 6 to 10: current period (clones=20, views=100 -> +100% growth)
         for i in range(6, 11):
             history["daily"][f"2026-10-{i:02d}"] = {"clones": 4, "uniqueCloners": 2, "views": 20, "uniqueVisitors": 10}
 
@@ -205,7 +195,7 @@ class TestAnalyticsDashboard(unittest.TestCase):
     def test_11_cumulative_recorded_totals(self):
         """11. Cumulative recorded totals across full historical record."""
         history = initialize_traffic_history()
-        for i in range(1, 21):  # 20 days
+        for i in range(1, 21):
             history["daily"][f"2026-09-{i:02d}"] = {"clones": 3, "uniqueCloners": 1, "views": 12, "uniqueVisitors": 4}
 
         metrics = compute_traffic_metrics(history)
@@ -222,7 +212,6 @@ class TestAnalyticsDashboard(unittest.TestCase):
         merge_activity_events(store, events_batch_1)
         self.assertEqual(len(store["events"]), 2)
 
-        # Batch 2 with duplicate fork-101 and new star-charlie
         events_batch_2 = [
             {"id": "fork-101", "action": "Fork", "actor": "alice", "timestamp": "2026-10-20T10:00:00Z"},
             {"id": "star-charlie", "action": "Star", "actor": "charlie", "timestamp": "2026-10-20T12:00:00Z"},
@@ -238,65 +227,69 @@ class TestAnalyticsDashboard(unittest.TestCase):
         dt = parse_iso_datetime(utc_ts)
         self.assertIsNotNone(dt)
         ist_str = format_ist(dt)
-        # 18:00 UTC + 5h30m = 23:30 IST on same day
         self.assertEqual(ist_str, "2026-10-20 23:30:00 IST")
 
-    def test_14_readme_marker_replacement(self):
-        """14. README marker replacement preserves all surrounding documentation."""
+    def test_14_readme_marker_replacement_and_copyright_removal(self):
+        """14. README marker replacement removes duplicate Copyright section and preserves Support."""
         original = (
+            "# Intelligent Data Systems\n\n"
             "## Copyright\n\n"
-            "Copyright (c) 2026 Shivam. All rights reserved.\n\n"
-            "### Support\n"
-            "Star the repo!\n"
+            "Copyright © 2026 Shivam S. Pimple. All rights reserved.\n\n"
+            "This repository is created for educational and reference purposes.\n"
+            "You may view the contents for learning and reference, but please do not\n"
+            "claim, copy, redistribute, or present this work as your own.\n\n"
+            "### ⭐ Support the Project\n\n"
+            "If you find this repository useful, please consider **starring ⭐ the repository**\n"
+            "and **following me on GitHub** for more projects and updates.\n\n"
+            "Your support is appreciated!\n"
         )
-        new_section = f"{START_MARKER}\n# Analytics Dashboard Content\n{END_MARKER}"
+        new_section = f"{START_MARKER}\n### Repository Insights\n{END_MARKER}"
 
-        # First insertion before ## Copyright
         updated = update_readme_content(original, new_section)
-        self.assertIn(START_MARKER, updated)
-        self.assertIn("Copyright (c) 2026 Shivam.", updated)
-        self.assertIn("Star the repo!", updated)
+        # Verify Copyright is COMPLETELY removed
+        self.assertNotIn("## Copyright", updated)
+        self.assertNotIn("All rights reserved", updated)
+        self.assertNotIn("educational and reference purposes", updated)
 
-        # Second update replacing existing markers
-        replacement_section = f"{START_MARKER}\n# Updated Analytics v2\n{END_MARKER}"
-        updated_again = update_readme_content(updated, replacement_section)
-        self.assertIn("Updated Analytics v2", updated_again)
-        self.assertNotIn("Analytics Dashboard Content", updated_again)
-        self.assertIn("Copyright (c) 2026 Shivam.", updated_again)
-        self.assertIn("Star the repo!", updated_again)
+        # Verify new analytics section is present
+        self.assertIn("### Repository Insights", updated)
+
+        # Verify Support section is preserved in clean editorial style
+        self.assertIn("### Support the Project", updated)
+        self.assertIn("starring the repository", updated)
 
     def test_15_valid_generated_json_and_svg(self):
-        """15. Valid generated JSON files and valid SVG format."""
-        chart_file = self.test_path / "traffic-chart.svg"
+        """15. Valid generated JSON files and theme-adaptive SVGs."""
+        metrics_file = self.test_path / "metrics.svg"
+        trend_file = self.test_path / "traffic-trend.svg"
+
+        metrics = {
+            "recordedCumulativeClones": 42,
+            "recordedCumulativeViews": 180,
+            "last5DaysSumUniqueCloners": 10,
+            "last5DaysSumUniqueVisitors": 45,
+            "availableDaysCount": 5,
+        }
+        generate_metrics_card_svg(metrics, forks_count=1, traffic_status="success", output_filepath=metrics_file)
+        self.assertTrue(metrics_file.exists())
+        m_content = metrics_file.read_text(encoding="utf-8")
+        self.assertTrue(m_content.startswith("<svg"))
+        self.assertTrue(m_content.endswith("</svg>\n"))
+        self.assertIn("TOTAL CLONES", m_content)
+        self.assertIn("42", m_content)
+        self.assertIn("TOTAL FORKS", m_content)
+        self.assertIn("prefers-color-scheme: dark", m_content)
+
         records = [
             {"date": "2026-10-18", "clones": 3, "uniqueCloners": 2, "views": 15, "uniqueVisitors": 6},
             {"date": "2026-10-19", "clones": 5, "uniqueCloners": 3, "views": 25, "uniqueVisitors": 10},
         ]
-        generate_svg_chart(records, chart_file)
-        self.assertTrue(chart_file.exists())
-        svg_content = chart_file.read_text(encoding="utf-8")
-        self.assertTrue(svg_content.startswith("<svg"))
-        self.assertTrue(svg_content.endswith("</svg>\n"))
-        self.assertIn("Oct 18", svg_content)
-        self.assertIn("Oct 19", svg_content)
-
-        # Badges
-        shields_dir = self.test_path / "shields"
-        metrics = {
-            "last5DaysTotalClones": 8,
-            "last5DaysTotalViews": 40,
-            "last5DaysAvgUniqueClonersPerDay": 2.5,
-            "last5DaysAvgUniqueVisitorsPerDay": 8.0,
-            "recordedCumulativeClones": 8,
-            "recordedCumulativeViews": 40,
-        }
-        generate_shields_badges(metrics, shields_dir)
-        badge_file = shields_dir / "total-clones.json"
-        self.assertTrue(badge_file.exists())
-        with open(badge_file, "r", encoding="utf-8") as f:
-            b_data = json.load(f)
-            self.assertEqual(b_data["schemaVersion"], 1)
-            self.assertEqual(b_data["message"], "8")
+        generate_svg_chart(records, trend_file)
+        self.assertTrue(trend_file.exists())
+        t_content = trend_file.read_text(encoding="utf-8")
+        self.assertTrue(t_content.startswith("<svg"))
+        self.assertTrue(t_content.endswith("</svg>\n"))
+        self.assertIn("5-DAY TRAFFIC TREND", t_content)
 
     def test_16_git_changes_filter(self):
         """16. Verify workflow targets only .github/analytics/ and README.md."""
@@ -306,19 +299,35 @@ class TestAnalyticsDashboard(unittest.TestCase):
         self.assertIn("git add .github/analytics/ README.md", wf_text)
         self.assertIn("[skip ci]", wf_text)
 
-    def test_17_badge_urls_and_default_branch(self):
-        """17. Correct badge URLs and default-branch references."""
+    def test_17_hall_of_appreciation_and_clean_layout(self):
+        """17. Hall of Appreciation renders verified public supporters without activity dumps."""
+        supporters = [
+            {
+                "username": "abhi220705",
+                "profileUrl": "https://github.com/abhi220705",
+                "avatarUrl": "https://github.com/abhi220705.png?size=96",
+                "role": "Community Fork",
+            }
+        ]
         markdown = render_dashboard_markdown(
             repo_name="shivampimple29/Intelligent-Data-System-sem5",
             default_branch="main",
-            traffic_metrics={"last5DaysRecords": []},
-            growth_metrics={},
-            recent_events=[],
-            update_time_ist="2026-10-21 23:00:00 IST",
-            traffic_status="success",
+            traffic_metrics={"availableDaysCount": 0},
+            forks_count=1,
+            supporters=supporters,
         )
-        self.assertIn("raw.githubusercontent.com%2Fshivampimple29%2FIntelligent-Data-System-sem5%2Fmain", markdown)
-        self.assertIn("main", markdown)
+
+        self.assertIn("### Repository Insights", markdown)
+        self.assertIn(".github/analytics/metrics.svg", markdown)
+        self.assertIn(".github/analytics/traffic-trend.svg", markdown)
+        self.assertIn("### Hall of Appreciation", markdown)
+        self.assertIn("abhi220705", markdown)
+        self.assertIn("Community Fork", markdown)
+
+        # Ensure NO maintainer activity dump or commit messages in public dashboard
+        self.assertNotIn("Commit 📦", markdown)
+        self.assertNotIn("chore(analytics)", markdown)
+        self.assertNotIn("Traffic API Authentication Setup", markdown)
 
 
 if __name__ == "__main__":
