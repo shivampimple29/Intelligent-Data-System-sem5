@@ -8,8 +8,10 @@ on:
       - '.github/analytics/**'
       - 'README.md'
   schedule:
-    # Runs daily at 01:17 UTC (06:47 AM IST)
-    - cron: '17 1 * * *'
+    # Runs daily at 18:31 UTC (00:01 AM IST, 1 minute after midnight IST)
+    - cron: '31 18 * * *'
+    # Runs daily at 00:01 UTC (05:31 AM IST, 1 minute after UTC calendar day closes)
+    - cron: '1 0 * * *'
   workflow_dispatch:
 
 concurrency:

@@ -294,6 +294,8 @@ def compute_traffic_metrics(history: Dict[str, Any]) -> Dict[str, Any]:
 
     cumulative_clones = sum(d.get("clones", 0) for d in daily.values())
     cumulative_views = sum(d.get("views", 0) for d in daily.values())
+    cumulative_unique_cloners = sum(d.get("uniqueCloners", 0) for d in daily.values())
+    cumulative_unique_visitors = sum(d.get("uniqueVisitors", 0) for d in daily.values())
 
     current_5_dates = sorted_dates[-5:] if sorted_dates else []
     current_records: List[Dict[str, Any]] = []
@@ -368,6 +370,8 @@ def compute_traffic_metrics(history: Dict[str, Any]) -> Dict[str, Any]:
         "viewGrowthPercent": view_growth_pct,
         "recordedCumulativeClones": cumulative_clones,
         "recordedCumulativeViews": cumulative_views,
+        "recordedCumulativeUniqueCloners": cumulative_unique_cloners,
+        "recordedCumulativeUniqueVisitors": cumulative_unique_visitors,
         "collectionStartedAt": history.get("collectionStartedAt"),
         "lastSuccessfulUpdate": history.get("lastSuccessfulUpdate"),
     }
@@ -438,22 +442,22 @@ def generate_metrics_card_svg(
         or metrics.get("availableDaysCount", 0) > 0
     )
 
-    # Values & subtitles
+    # Values & subtitles (Lifetime Aggregation)
     if has_traffic:
         clones_val = f"{metrics.get('recordedCumulativeClones', 0):,}"
-        clones_sub = "Recorded cumulative"
+        clones_sub = "Recorded lifetime"
         clones_class = "metric-val"
 
-        u_cloners_val = f"{metrics.get('last5DaysSumUniqueCloners', 0):,}"
-        u_cloners_sub = "5-day aggregate"
+        u_cloners_val = f"{metrics.get('recordedCumulativeUniqueCloners', 0):,}"
+        u_cloners_sub = "Recorded lifetime"
         u_cloners_class = "metric-val"
 
         views_val = f"{metrics.get('recordedCumulativeViews', 0):,}"
-        views_sub = "Recorded cumulative"
+        views_sub = "Recorded lifetime"
         views_class = "metric-val"
 
-        u_visitors_val = f"{metrics.get('last5DaysSumUniqueVisitors', 0):,}"
-        u_visitors_sub = "5-day aggregate"
+        u_visitors_val = f"{metrics.get('recordedCumulativeUniqueVisitors', 0):,}"
+        u_visitors_sub = "Recorded lifetime"
         u_visitors_class = "metric-val"
     else:
         clones_val = "—"
@@ -669,8 +673,8 @@ def generate_shields_badges(
         },
         "daily-unique-cloners.json": {
             "schemaVersion": 1,
-            "label": "5-day unique cloners",
-            "message": str(metrics.get("last5DaysSumUniqueCloners", 0)),
+            "label": "unique cloners",
+            "message": str(metrics.get("recordedCumulativeUniqueCloners", 0)),
             "color": "informational",
         },
         "total-views.json": {
@@ -681,8 +685,8 @@ def generate_shields_badges(
         },
         "daily-unique-visitors.json": {
             "schemaVersion": 1,
-            "label": "5-day unique visitors",
-            "message": str(metrics.get("last5DaysSumUniqueVisitors", 0)),
+            "label": "unique visitors",
+            "message": str(metrics.get("recordedCumulativeUniqueVisitors", 0)),
             "color": "informational",
         },
         "cumulative-clones.json": {
@@ -709,32 +713,41 @@ def generate_shields_badges(
 
 def render_hall_of_appreciation(supporters: List[Dict[str, str]]) -> str:
     """
-    Render the Hall of Appreciation recognition gallery.
+    Render the Hall of Appreciation recognition gallery with onboarding marketing text.
     Displays verified public supporters with avatar, username, and role.
     Respects strict privacy: never associates anyone with cloning/viewing activity.
     """
-    if not supporters:
-        return "<p align=\"center\"><em>Public forks and community stars will be recognized here.</em></p>"
-
-    cells = []
-    for s in supporters[:10]:
-        u = s.get("username", "")
-        p_url = s.get("profileUrl", f"https://github.com/{u}")
-        a_url = s.get("avatarUrl", f"https://github.com/{u}.png?size=96")
-        role = s.get("role", "Community Supporter")
-
-        cell = (
-            f'    <td align="center" width="160">\n'
-            f'      <a href="{p_url}">\n'
-            f'        <img src="{a_url}" width="48" height="48" alt="{u}" /><br />\n'
-            f'        <b>@{u}</b>\n'
-            f'      </a><br />\n'
-            f'      <sub>{role}</sub>\n'
-            f'    </td>'
+    if supporters:
+        intro_text = (
+            "> ⭐ **Want your profile featured here?** Star or fork this repository to be "
+            "permanently recognized in the Hall of Appreciation! New supporters are automatically "
+            "inducted every night at 12:00 AM IST.\n\n"
         )
-        cells.append(cell)
+        cells = []
+        for s in supporters[:15]:
+            u = s.get("username", "")
+            p_url = s.get("profileUrl", f"https://github.com/{u}")
+            a_url = s.get("avatarUrl", f"https://github.com/{u}.png?size=96")
+            role = s.get("role", "Community Supporter")
 
-    return f'<table align="center">\n  <tr>\n' + "\n".join(cells) + "\n  </tr>\n</table>"
+            cell = (
+                f'    <td align="center" width="160">\n'
+                f'      <a href="{p_url}">\n'
+                f'        <img src="{a_url}" width="48" height="48" alt="{u}" /><br />\n'
+                f'        <b>@{u}</b>\n'
+                f'      </a><br />\n'
+                f'      <sub>{role}</sub>\n'
+                f'    </td>'
+            )
+            cells.append(cell)
+
+        table_markup = f'<table align="center">\n  <tr>\n' + "\n".join(cells) + "\n  </tr>\n</table>"
+        return intro_text + table_markup
+    else:
+        return (
+            "> 🌟 **Be the very first supporter!** Star or fork this repository to claim your "
+            "exclusive spot in the Hall of Appreciation! Updates automatically every night at 12:00 AM IST.\n"
+        )
 
 
 def render_dashboard_markdown(
@@ -746,8 +759,7 @@ def render_dashboard_markdown(
 ) -> str:
     """
     Build the refined, minimal public dashboard.
-    Shows only the metrics that matter, clean SVG cards, compact trendline,
-    and the Hall of Appreciation recognition wall.
+    Shows the 5 core lifetime metrics and the Hall of Appreciation recognition wall.
     """
     hall_markup = render_hall_of_appreciation(supporters)
 
@@ -756,10 +768,6 @@ def render_dashboard_markdown(
 
 <p align="center">
   <img src=".github/analytics/metrics.svg" alt="Repository Metrics" width="100%">
-</p>
-
-<p align="center">
-  <img src=".github/analytics/traffic-trend.svg" alt="5-Day Traffic Trend" width="100%">
 </p>
 
 ### Hall of Appreciation
@@ -774,7 +782,7 @@ def update_readme_content(original_readme: str, new_analytics_section: str) -> s
     """
     Safely replace the analytics section between START_MARKER and END_MARKER.
     Removes any duplicated Copyright section completely (covered by LICENSE).
-    Preserves and refines the Support the Project section.
+    Preserves and refines the interactive Support & Contribute section.
     """
     cleaned = original_readme
 
@@ -785,7 +793,6 @@ def update_readme_content(original_readme: str, new_analytics_section: str) -> s
     )
     cleaned = copyright_pattern.sub("", cleaned)
 
-    # Clean up any leftover duplicate copyright statements
     cleaned = re.sub(
         r"## Copyright\s+.*?(?=(###|<!--|$))",
         "",
@@ -793,17 +800,33 @@ def update_readme_content(original_readme: str, new_analytics_section: str) -> s
         flags=re.DOTALL | re.IGNORECASE,
     )
 
-    # 2. Refine Support the Project section
+    # 2. Refined interactive Support & Contribute section
     support_cleaned = (
         "\n\n---\n\n"
-        "### Support the Project\n\n"
-        "If you find this repository helpful, consider starring the repository "
-        "and following [@shivampimple29](https://github.com/shivampimple29) on GitHub."
+        "### Support & Contribute\n\n"
+        "If this repository helps your studies, practicals, or reference work, support the project:\n\n"
+        '<p align="left">\n'
+        '  <a href="https://github.com/shivampimple29/Intelligent-Data-System-sem5/stargazers">\n'
+        '    <img src="https://img.shields.io/badge/⭐_Star_Repository-238636?style=for-the-badge&logo=github&logoColor=white" alt="Star Repository" />\n'
+        '  </a>\n'
+        '  &nbsp;\n'
+        '  <a href="https://github.com/shivampimple29/Intelligent-Data-System-sem5/fork">\n'
+        '    <img src="https://img.shields.io/badge/🍴_Fork_Project-1f6feb?style=for-the-badge&logo=github&logoColor=white" alt="Fork Project" />\n'
+        '  </a>\n'
+        '  &nbsp;\n'
+        '  <a href="https://github.com/shivampimple29">\n'
+        '    <img src="https://img.shields.io/badge/👤_Follow-30363d?style=for-the-badge&logo=github&logoColor=white" alt="Follow Author" />\n'
+        '  </a>\n'
+        '</p>\n\n'
+        "```bash\n"
+        "# Clone this repository\n"
+        "git clone https://github.com/shivampimple29/Intelligent-Data-System-sem5.git\n"
+        "```"
     )
 
     # Strip existing Support section and any preceding dividers
     cleaned = re.sub(
-        r"(\n\s*---\s*)*\n*###\s*⭐?\s*Support the Project.*",
+        r"(\n\s*---\s*)*\n*###\s*⭐?\s*Support.*",
         "",
         cleaned,
         flags=re.DOTALL | re.IGNORECASE,
@@ -815,7 +838,6 @@ def update_readme_content(original_readme: str, new_analytics_section: str) -> s
     if marker_pattern.search(cleaned):
         cleaned = marker_pattern.sub(new_analytics_section, cleaned)
     else:
-        # Prepend after title or at top
         if cleaned.strip().startswith("#"):
             lines = cleaned.strip().split("\n")
             title = lines[0]
@@ -826,10 +848,9 @@ def update_readme_content(original_readme: str, new_analytics_section: str) -> s
 
     # Ensure clean trailing support section
     cleaned = cleaned.strip()
-    if "### Support the Project" not in cleaned:
+    if "### Support & Contribute" not in cleaned and "### Support the Project" not in cleaned:
         cleaned = f"{cleaned}\n\n{support_cleaned}"
 
-    # Normalize double linebreaks
     cleaned = re.sub(r"\n{3,}", "\n\n", cleaned) + "\n"
     return cleaned
 
@@ -913,25 +934,23 @@ def run_pipeline() -> int:
 
     # 4. Fetch Verified Public Supporters for Hall of Appreciation
     print("[4/5] Identifying verified public supporters...")
-    supporters: List[Dict[str, str]] = []
-    seen_users = set()
+    supporters_map: Dict[str, Dict[str, str]] = {}
 
     # Public Forks
-    f_status, forks_data, _ = client.request(f"repos/{repo_name}/forks?sort=newest&per_page=30", token=client.general_token)
+    f_status, forks_data, _ = client.request(f"repos/{repo_name}/forks?sort=newest&per_page=50", token=client.general_token)
     if f_status == 200 and isinstance(forks_data, list):
         for fork in forks_data:
             owner = fork.get("owner", {})
             u_login = owner.get("login")
-            if u_login and u_login not in seen_users:
-                seen_users.add(u_login)
-                supporters.append({
+            if u_login:
+                supporters_map[u_login] = {
                     "username": u_login,
                     "profileUrl": owner.get("html_url", f"https://github.com/{u_login}"),
                     "avatarUrl": f"https://github.com/{u_login}.png?size=96",
                     "role": "Community Fork",
-                })
+                }
 
-    # Public Stargazers (if authenticated)
+    # Public Stargazers
     s_status, stars_data, _ = client.request(
         f"repos/{repo_name}/stargazers",
         token=client.general_token,
@@ -941,14 +960,18 @@ def run_pipeline() -> int:
         for star in stars_data:
             user = star.get("user", {})
             u_login = user.get("login")
-            if u_login and u_login not in seen_users:
-                seen_users.add(u_login)
-                supporters.append({
-                    "username": u_login,
-                    "profileUrl": user.get("html_url", f"https://github.com/{u_login}"),
-                    "avatarUrl": f"https://github.com/{u_login}.png?size=96",
-                    "role": "Repository Supporter",
-                })
+            if u_login:
+                if u_login in supporters_map:
+                    supporters_map[u_login]["role"] = "Community Star & Fork"
+                else:
+                    supporters_map[u_login] = {
+                        "username": u_login,
+                        "profileUrl": user.get("html_url", f"https://github.com/{u_login}"),
+                        "avatarUrl": f"https://github.com/{u_login}.png?size=96",
+                        "role": "Community Star",
+                    }
+
+    supporters = list(supporters_map.values())
 
     # 5. Generate Visualizations, Snapshot & Update README
     print("[5/5] Generating premium visuals and updating README...")

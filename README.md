@@ -9,11 +9,9 @@ Practical solutions, lab experiments, and reference implementations for Semester
   <img src=".github/analytics/metrics.svg" alt="Repository Metrics" width="100%">
 </p>
 
-<p align="center">
-  <img src=".github/analytics/traffic-trend.svg" alt="5-Day Traffic Trend" width="100%">
-</p>
-
 ### Hall of Appreciation
+
+> ⭐ **Want your profile featured here?** Star or fork this repository to be permanently recognized in the Hall of Appreciation! New supporters are automatically inducted every night at 12:00 AM IST.
 
 <table align="center">
   <tr>
@@ -30,6 +28,25 @@ Practical solutions, lab experiments, and reference implementations for Semester
 
 ---
 
-### Support the Project
+### Support & Contribute
 
-If you find this repository helpful, consider starring the repository and following [@shivampimple29](https://github.com/shivampimple29) on GitHub.
+If this repository helps your studies, practicals, or reference work, support the project:
+
+<p align="left">
+  <a href="https://github.com/shivampimple29/Intelligent-Data-System-sem5/stargazers">
+    <img src="https://img.shields.io/badge/⭐_Star_Repository-238636?style=for-the-badge&logo=github&logoColor=white" alt="Star Repository" />
+  </a>
+  &nbsp;
+  <a href="https://github.com/shivampimple29/Intelligent-Data-System-sem5/fork">
+    <img src="https://img.shields.io/badge/🍴_Fork_Project-1f6feb?style=for-the-badge&logo=github&logoColor=white" alt="Fork Project" />
+  </a>
+  &nbsp;
+  <a href="https://github.com/shivampimple29">
+    <img src="https://img.shields.io/badge/👤_Follow-30363d?style=for-the-badge&logo=github&logoColor=white" alt="Follow Author" />
+  </a>
+</p>
+
+```bash
+# Clone this repository
+git clone https://github.com/shivampimple29/Intelligent-Data-System-sem5.git
+```

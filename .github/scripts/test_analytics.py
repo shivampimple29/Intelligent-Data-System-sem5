@@ -201,6 +201,8 @@ class TestAnalyticsDashboard(unittest.TestCase):
         metrics = compute_traffic_metrics(history)
         self.assertEqual(metrics["recordedCumulativeClones"], 60)
         self.assertEqual(metrics["recordedCumulativeViews"], 240)
+        self.assertEqual(metrics["recordedCumulativeUniqueCloners"], 20)
+        self.assertEqual(metrics["recordedCumulativeUniqueVisitors"], 80)
 
     def test_12_activity_deduplication(self):
         """12. Activity event deduplication using stable IDs."""
@@ -255,8 +257,8 @@ class TestAnalyticsDashboard(unittest.TestCase):
         self.assertIn("### Repository Insights", updated)
 
         # Verify Support section is preserved in clean editorial style
-        self.assertIn("### Support the Project", updated)
-        self.assertIn("starring the repository", updated)
+        self.assertIn("### Support & Contribute", updated)
+        self.assertIn("git clone", updated)
 
     def test_15_valid_generated_json_and_svg(self):
         """15. Valid generated JSON files and theme-adaptive SVGs."""
@@ -319,10 +321,11 @@ class TestAnalyticsDashboard(unittest.TestCase):
 
         self.assertIn("### Repository Insights", markdown)
         self.assertIn(".github/analytics/metrics.svg", markdown)
-        self.assertIn(".github/analytics/traffic-trend.svg", markdown)
+        self.assertNotIn(".github/analytics/traffic-trend.svg", markdown)
         self.assertIn("### Hall of Appreciation", markdown)
         self.assertIn("abhi220705", markdown)
         self.assertIn("Community Fork", markdown)
+        self.assertIn("Want your profile featured here?", markdown)
 
         # Ensure NO maintainer activity dump or commit messages in public dashboard
         self.assertNotIn("Commit 📦", markdown)
