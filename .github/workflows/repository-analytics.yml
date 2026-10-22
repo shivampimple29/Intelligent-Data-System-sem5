@@ -80,9 +80,11 @@ jobs:
                   with open(p, 'r', encoding='utf-8') as f:
                       json.load(f)
               elif p.suffix == '.svg':
-                  content = p.read_text(encoding='utf-8')
-                  if '<svg' not in content or '</svg>' not in content:
-                      print(f'Error: Invalid SVG in {p}', file=sys.stderr)
+                  import xml.etree.ElementTree as ET
+                  try:
+                      ET.parse(p)
+                  except Exception as e:
+                      print(f'Error: Invalid XML in {p}: {e}', file=sys.stderr)
                       sys.exit(1)
 
           print('All analytics artifacts validated successfully.')

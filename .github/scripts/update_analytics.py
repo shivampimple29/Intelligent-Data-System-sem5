@@ -687,7 +687,7 @@ def generate_hall_banner_svg(supporters_count: int, output_filepath: Path) -> No
 
   <!-- Central Clean Announcement Text -->
   <text x="410" y="31" text-anchor="middle" class="banner-text">
-    {announcement} <tspan class="pipe-sep">&nbsp;|&nbsp;</tspan> Updates every day at 12:00 AM IST
+    {announcement} <tspan class="pipe-sep"> | </tspan> Updates every day at 12:00 AM IST
   </text>
 </svg>
 """
