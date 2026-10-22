@@ -57,6 +57,7 @@ jobs:
               analytics_dir / 'activity-history.json',
               analytics_dir / 'dashboard.json',
               analytics_dir / 'metrics.svg',
+              analytics_dir / 'hall-title.svg',
               analytics_dir / 'hall-banner.svg',
               analytics_dir / 'assets' / 'star.svg',
               analytics_dir / 'assets' / 'fork.svg',

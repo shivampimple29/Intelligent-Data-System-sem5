@@ -13,6 +13,7 @@ Zero external dependencies required (uses standard library only).
 
 from __future__ import annotations
 
+import base64
 import json
 import math
 import os
@@ -531,62 +532,301 @@ def generate_metrics_card_svg(
     atomic_write_text(output_filepath, svg_content)
 
 
+def generate_hall_title_svg(output_filepath: Path) -> None:
+    """
+    Generate the royal Golden Wings header for the Hall of Appreciation.
+    Features majestic symmetrical golden plumage flanking royal typography.
+    """
+    output_filepath.parent.mkdir(parents=True, exist_ok=True)
+
+    svg_content = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 120" width="100%" height="auto">
+  <defs>
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff2a8"/>
+      <stop offset="25%" stop-color="#ffd700"/>
+      <stop offset="60%" stop-color="#d48806"/>
+      <stop offset="90%" stop-color="#8c5803"/>
+      <stop offset="100%" stop-color="#ffd700"/>
+    </linearGradient>
+    <linearGradient id="gold-bright" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff8d1"/>
+      <stop offset="45%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#b87304"/>
+    </linearGradient>
+    <linearGradient id="gold-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d48806"/>
+      <stop offset="100%" stop-color="#3d2703"/>
+    </linearGradient>
+    <filter id="gold-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+
+    <!-- Detailed Majestic Wing (Left Side) -->
+    <g id="majestic-wing">
+      <path d="M 0 52 C -18 38, -32 20, -36 -2 C -42 -26, -30 -44, -18 -54 C -22 -44, -22 -28, -14 -12 C -8 3, 2 18, 12 32 Z" fill="url(#gold-bright)" filter="url(#gold-shadow)"/>
+      <path d="M -18 -54 C -30 -42, -42 -24, -36 -2 C -32 20, -18 38, 0 52 C -12 38, -24 20, -28 0 C -32 -20, -22 -38, -18 -54 Z" fill="url(#gold-dark)" opacity="0.4"/>
+      <path d="M 5 56 C -20 48, -45 32, -62 8 C -74 -10, -78 -28, -74 -36 C -75 -25, -68 -8, -52 10 C -38 26, -18 42, 10 50 Z" fill="url(#gold-grad)" filter="url(#gold-shadow)"/>
+      <path d="M 12 60 C -18 56, -55 42, -80 20 C -96 2, -102 -14, -100 -22 C -99 -12, -90 6, -72 24 C -54 40, -22 52, 14 56 Z" fill="url(#gold-bright)" filter="url(#gold-shadow)"/>
+      <path d="M 16 66 C -16 64, -60 52, -90 32 C -112 16, -120 -2, -118 -10 C -116 0, -104 18, -84 34 C -62 48, -20 58, 16 62 Z" fill="url(#gold-grad)" filter="url(#gold-shadow)"/>
+      <path d="M 18 72 C -14 70, -56 60, -84 44 C -106 30, -114 14, -112 6 C -110 14, -98 30, -78 44 C -56 56, -16 66, 18 68 Z" fill="url(#gold-bright)" filter="url(#gold-shadow)"/>
+      <path d="M 18 78 C -12 76, -48 68, -74 54 C -94 42, -102 28, -100 20 C -98 26, -88 40, -68 52 C -48 62, -12 72, 18 74 Z" fill="url(#gold-grad)" filter="url(#gold-shadow)"/>
+      <path d="M 16 84 C -8 82, -38 74, -60 62 C -78 52, -84 40, -82 34 C -80 38, -72 50, -54 60 C -36 68, -8 78, 16 80 Z" fill="url(#gold-bright)" filter="url(#gold-shadow)"/>
+      <path d="M 12 90 C -6 88, -28 80, -44 70 C -58 60, -62 50, -60 46 C -58 50, -52 58, -38 66 C -24 74, -4 82, 12 85 Z" fill="url(#gold-grad)" filter="url(#gold-shadow)"/>
+      <path d="M 18 50 C 6 52, -2 60, 0 70 C 2 78, 12 84, 20 86 C 14 80, 10 74, 12 66 C 14 58, 20 54, 24 50 Z" fill="url(#gold-dark)"/>
+      <circle cx="8" cy="65" r="16" fill="url(#gold-bright)" opacity="0.6"/>
+    </g>
+    
+    <style>
+      .royal-title {
+        font: 800 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+        fill: url(#gold-bright);
+        letter-spacing: 4px;
+        filter: drop-shadow(0px 2px 8px rgba(212, 136, 6, 0.5));
+      }
+      .royal-sub {
+        font: 600 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+        fill: #8b949e;
+        letter-spacing: 3px;
+      }
+    </style>
+  </defs>
+
+  <!-- Left Wing -->
+  <g transform="translate(195, 45) scale(0.85)">
+    <use href="#majestic-wing"/>
+  </g>
+
+  <!-- Right Wing (Mirrored) -->
+  <g transform="translate(625, 45) scale(-0.85, 0.85)">
+    <use href="#majestic-wing"/>
+  </g>
+
+  <!-- Center Crest & Royal Title -->
+  <g>
+    <path d="M 410 18 L 413 25 L 420 27 L 414 32 L 416 39 L 410 35 L 404 39 L 406 32 L 400 27 L 407 25 Z" fill="url(#gold-bright)"/>
+    <text x="410" y="66" text-anchor="middle" class="royal-title">HALL OF APPRECIATION</text>
+    <line x1="270" y1="80" x2="550" y2="80" stroke="url(#gold-grad)" stroke-width="1.5" stroke-linecap="round"/>
+    <polygon points="410,76 415,80 410,84 405,80" fill="url(#gold-bright)"/>
+    <circle cx="270" cy="80" r="2.5" fill="url(#gold-bright)"/>
+    <circle cx="550" cy="80" r="2.5" fill="url(#gold-bright)"/>
+    <text x="410" y="98" text-anchor="middle" class="royal-sub">HONORARY RECOGNITION WALL</text>
+  </g>
+</svg>
+"""
+    atomic_write_text(output_filepath, svg_content)
+
+
 def generate_hall_banner_svg(supporters_count: int, output_filepath: Path) -> None:
     """
     Generate an animated SVG banner for the Hall of Appreciation.
-    Features a pulsing beacon, sleek dark mode backdrop, and clean typography.
+    Features dual-circulating gold laser lines starting simultaneously from top-center,
+    traveling clockwise and counter-clockwise in a continuous loop.
+    Clean text with vertical pipe separator and no emojis or duplicate titles.
     """
     output_filepath.parent.mkdir(parents=True, exist_ok=True)
 
     if supporters_count > 0:
-        title = "COMMUNITY HALL OF APPRECIATION"
-        subtitle = "Star or fork this repository to join the wall of appreciation • Inducted nightly at 12:00 AM IST"
+        announcement = "Star or fork this repository to join the wall of appreciation"
     else:
-        title = "BE THE FOUNDING SUPPORTER"
-        subtitle = "Be the very first to star or fork this repository and claim your spot • Inducted nightly at 12:00 AM IST"
+        announcement = "Be the first to star or fork this repository to claim your spot"
 
-    svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 70" width="100%" height="auto">
+    svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 54" width="100%" height="auto">
   <defs>
-    <linearGradient id="sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#58a6ff"/>
-      <stop offset="100%" stop-color="#bc8cff"/>
+    <linearGradient id="gold-tracer" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fff8d1"/>
+      <stop offset="30%" stop-color="#ffd700"/>
+      <stop offset="70%" stop-color="#ffb300"/>
+      <stop offset="100%" stop-color="#fff8d1"/>
     </linearGradient>
+    <filter id="gold-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
     <style>
-      .banner-card {{ fill: #ffffff; stroke: #d0d7de; stroke-width: 1; }}
-      .banner-title {{ font: 700 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #1f2328; letter-spacing: 0.8px; }}
-      .banner-sub {{ font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #656d76; }}
-      .beacon-core {{ fill: #2da44e; }}
-      .beacon-pulse {{ fill: #2da44e; opacity: 0.3; animation: pulse 2.5s infinite ease-in-out; }}
-      @keyframes pulse {{
-        0% {{ r: 4px; opacity: 0.7; }}
-        50% {{ r: 10px; opacity: 0.05; }}
-        100% {{ r: 4px; opacity: 0.7; }}
+      .banner-bg {{ fill: #0d1117; stroke: #2a2010; stroke-width: 1.5; }}
+      .tracer-line {{
+        stroke: url(#gold-tracer);
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        filter: url(#gold-glow);
+        fill: none;
+        stroke-dasharray: 160 701;
+        animation: circuit 3.2s linear infinite;
       }}
-      @media (prefers-color-scheme: dark) {{
-        .banner-card {{ fill: #0d1117; stroke: #30363d; }}
-        .banner-title {{ fill: #f0f6fc; }}
-        .banner-sub {{ fill: #8b949e; }}
-        .beacon-core {{ fill: #3fb950; }}
-        .beacon-pulse {{ fill: #3fb950; }}
+      @keyframes circuit {{
+        0% {{ stroke-dashoffset: 160; }}
+        100% {{ stroke-dashoffset: -701; }}
+      }}
+      .banner-text {{
+        font: 500 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+        fill: #e6edf3;
+        letter-spacing: 0.3px;
+      }}
+      .pipe-sep {{
+        font-weight: 700;
+        fill: #ffd700;
+      }}
+      @media (prefers-color-scheme: light) {{
+        .banner-bg {{ fill: #fcfaf6; stroke: #e0d0b0; }}
+        .banner-text {{ fill: #1f2328; }}
       }}
     </style>
   </defs>
 
-  <rect width="820" height="70" rx="8" class="banner-card"/>
+  <!-- Background Card -->
+  <rect x="1" y="1" width="818" height="52" rx="8" class="banner-bg"/>
 
-  <!-- Pulsing Beacon -->
-  <g transform="translate(32, 35)">
-    <circle cx="0" cy="0" r="10" class="beacon-pulse"/>
-    <circle cx="0" cy="0" r="4" class="beacon-core"/>
+  <!-- Left Circulation (Counter-Clockwise from top-center 410,1 to bottom-center 410,53) -->
+  <path d="M 410 1 L 9 1 A 8 8 0 0 0 1 9 L 1 45 A 8 8 0 0 0 9 53 L 410 53" class="tracer-line"/>
+
+  <!-- Right Circulation (Clockwise from top-center 410,1 to bottom-center 410,53) -->
+  <path d="M 410 1 L 811 1 A 8 8 0 0 1 819 9 L 819 45 A 8 8 0 0 1 811 53 L 410 53" class="tracer-line"/>
+
+  <!-- Central Clean Announcement Text -->
+  <text x="410" y="31" text-anchor="middle" class="banner-text">
+    {announcement} <tspan class="pipe-sep">&nbsp;|&nbsp;</tspan> Updates every day at 12:00 AM IST
+  </text>
+</svg>
+"""
+    atomic_write_text(output_filepath, svg_content)
+
+
+def generate_supporter_card_svg(
+    supporter: Dict[str, str],
+    output_filepath: Path,
+) -> None:
+    """
+    Generate a royal esports-style golden framed avatar card for a Hall of Famer.
+    Includes the angular top crest, beveled gold border, bottom-left '2026' badge,
+    embedded avatar image, username, and role badge.
+    """
+    output_filepath.parent.mkdir(parents=True, exist_ok=True)
+    u = supporter.get("username", "")
+    role = supporter.get("role", "Community Fork")
+    year = supporter.get("year", "2026")
+    avatar_url = supporter.get("avatarUrl", f"https://github.com/{u}.png?size=96")
+
+    # Fetch avatar bytes and convert to base64 for offline & camo resilience
+    avatar_data_uri = avatar_url
+    try:
+        req = urllib.request.Request(
+            avatar_url,
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"},
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            avatar_b64 = base64.b64encode(resp.read()).decode("utf-8")
+            avatar_data_uri = f"data:image/png;base64,{avatar_b64}"
+    except Exception:
+        pass
+
+    svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" width="240" height="280">
+  <defs>
+    <!-- Gold Metallic Gradients -->
+    <linearGradient id="frame-gold-main" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff8d1"/>
+      <stop offset="20%" stop-color="#ffd700"/>
+      <stop offset="50%" stop-color="#e09900"/>
+      <stop offset="80%" stop-color="#995e00"/>
+      <stop offset="100%" stop-color="#ffd700"/>
+    </linearGradient>
+    <linearGradient id="frame-gold-light" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbe8"/>
+      <stop offset="40%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#b87304"/>
+    </linearGradient>
+    <linearGradient id="badge-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffe680"/>
+      <stop offset="50%" stop-color="#d48806"/>
+      <stop offset="100%" stop-color="#ffd700"/>
+    </linearGradient>
+
+    <!-- Clip path for the square avatar inside the frame -->
+    <clipPath id="avatar-clip-{u}">
+      <rect x="47" y="47" width="126" height="126" rx="4"/>
+    </clipPath>
+
+    <filter id="royal-shadow-{u}" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.8"/>
+    </filter>
+
+    <style>
+      .supporter-name {{
+        font: 700 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+        fill: #f0f6fc;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      }}
+      .role-pill-bg {{
+        fill: #161b22;
+        stroke: #ffd700;
+        stroke-width: 1.2;
+      }}
+      .role-pill-text {{
+        font: 600 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+        fill: #ffd700;
+        letter-spacing: 0.5px;
+      }}
+      .year-text {{
+        font: 800 16px "Times New Roman", Georgia, serif;
+        fill: #ffdf7e;
+        letter-spacing: 1px;
+      }}
+    </style>
+  </defs>
+
+  <!-- ==================== AVATAR (INSIDE FRAME) ==================== -->
+  <g filter="url(#royal-shadow-{u})">
+    <rect x="47" y="47" width="126" height="126" rx="4" fill="#0d1117"/>
+    <image href="{avatar_data_uri}" x="47" y="47" width="126" height="126" clip-path="url(#avatar-clip-{u})" preserveAspectRatio="xMidYMid slice"/>
   </g>
 
-  <!-- Content -->
-  <text x="56" y="29" class="banner-title">{title}</text>
-  <text x="56" y="49" class="banner-sub">{subtitle}</text>
+  <!-- ==================== ROYAL GOLDEN FRAME ==================== -->
+  <g filter="url(#royal-shadow-{u})">
+    <!-- Outer Main Gold Border with Chamfered Corners -->
+    <path d="M 54 40 L 166 40 L 180 54 L 180 166 L 166 180 L 54 180 L 40 166 L 40 54 Z"
+          fill="none" stroke="url(#frame-gold-main)" stroke-width="8" stroke-linejoin="miter"/>
 
-  <!-- Vector Sparkle Icon -->
-  <g transform="translate(774, 25)">
-    <path d="M10 0L12.5 7.5L20 10L12.5 12.5L10 20L7.5 12.5L0 10L7.5 7.5L10 0Z" fill="url(#sparkle-grad)" opacity="0.85"/>
+    <!-- Inner Dark Groove -->
+    <path d="M 52 42 L 168 42 L 178 52 L 178 168 L 168 178 L 52 178 L 42 168 L 42 52 Z"
+          fill="none" stroke="#000000" stroke-width="2.5" stroke-linejoin="miter"/>
+
+    <!-- Inner Gold Lip -->
+    <rect x="45" y="45" width="130" height="130" fill="none" stroke="url(#frame-gold-light)" stroke-width="2"/>
+
+    <!-- Top Angular Crest / Crown -->
+    <path d="M 110 32 L 88 18 L 102 18 L 110 24 L 118 24 L 126 18 L 140 18 L 118 32 Z" fill="url(#frame-gold-main)"/>
+    <path d="M 98 18 L 110 27 L 122 18 Z" fill="#0d1117"/>
+
+    <!-- Top Left Winged Blade -->
+    <path d="M 68 12 L 86 18 L 62 26 L 42 38 L 52 38 L 74 24 L 88 20 Z" fill="url(#frame-gold-light)"/>
+    <!-- Top Right Winged Blade (Mirrored) -->
+    <path d="M 160 12 L 142 18 L 166 26 L 186 38 L 176 38 L 154 24 L 140 20 Z" fill="url(#frame-gold-light)"/>
+
+    <!-- Detached Shard Accents Under Outer Crest Wings -->
+    <polygon points="56,36 68,30 64,36" fill="url(#frame-gold-main)"/>
+    <polygon points="172,36 160,30 164,36" fill="url(#frame-gold-main)"/>
+
+    <!-- Bottom Angular Notch -->
+    <path d="M 94 178 L 110 188 L 126 178 L 138 178 L 110 194 L 82 178 Z" fill="url(#frame-gold-main)"/>
+    <polygon points="98,179 110,186 122,179" fill="#0d1117"/>
+
+    <!-- Bottom-Left Badge: 2026 -->
+    <path d="M 28 144 L 68 144 L 72 148 L 72 184 L 68 188 L 28 188 L 24 184 L 24 148 Z"
+          fill="#000000" stroke="url(#badge-gold)" stroke-width="4" stroke-linejoin="miter"/>
+    
+    <rect x="29" y="149" width="38" height="34" fill="#080808" stroke="url(#frame-gold-light)" stroke-width="1.2"/>
+
+    <text x="48" y="172" text-anchor="middle" class="year-text">{year}</text>
+  </g>
+
+  <!-- ==================== SUPPORTER USERNAME & ROLE ==================== -->
+  <g transform="translate(0, 204)">
+    <text x="110" y="14" text-anchor="middle" class="supporter-name">@{u}</text>
+
+    <rect x="35" y="24" width="150" height="24" rx="12" class="role-pill-bg"/>
+    <text x="110" y="40" text-anchor="middle" class="role-pill-text">{role}</text>
   </g>
 </svg>
 """
@@ -840,45 +1080,42 @@ def generate_shields_badges(
 def render_hall_of_appreciation(supporters: List[Dict[str, str]]) -> str:
     """
     Render the Hall of Appreciation recognition gallery.
-    Features an animated status banner and a spacious, elegant supporter grid.
+    Features royal golden wings title, animated dual-circulating gold banner,
+    and esports-style golden framed supporter cards.
     Displays verified public supporters with avatar, username, and role.
     Respects strict privacy: never associates anyone with cloning/viewing activity.
     """
-    banner_img = (
+    header_markup = (
+        '<br><br>\n\n'
+        '<p align="center">\n'
+        '  <img src=".github/analytics/hall-title.svg" alt="Hall of Appreciation" width="620">\n'
+        '</p>\n\n'
         '<p align="center">\n'
         '  <img src=".github/analytics/hall-banner.svg" alt="Hall of Appreciation Banner" width="100%">\n'
         '</p>'
     )
     if not supporters:
-        return banner_img
+        return header_markup
 
     cells = []
     for s in supporters[:15]:
         u = s.get("username", "")
         p_url = s.get("profileUrl", f"https://github.com/{u}")
-        a_url = s.get("avatarUrl", f"https://github.com/{u}.png?size=96")
-        role = s.get("role", "Community Supporter")
-
-        if "Star & Fork" in role:
-            border_color = "#bc8cff"
-        elif "Star" in role:
-            border_color = "#e3b341"
-        else:
-            border_color = "#58a6ff"
 
         cell = (
-            f'    <td align="center" width="220" style="padding: 16px 24px;">\n'
+            f'    <td align="center" style="border: none; padding: 12px 20px;">\n'
             f'      <a href="{p_url}">\n'
-            f'        <img src="{a_url}" width="64" height="64" style="border-radius: 50%; border: 2px solid {border_color};" alt="{u}" /><br />\n'
-            f'        <b>@{u}</b>\n'
-            f'      </a><br />\n'
-            f'      <code>{role}</code>\n'
+            f'        <img src=".github/analytics/supporters/{u}.svg" width="220" alt="{u}" />\n'
+            f'      </a>\n'
             f'    </td>'
         )
         cells.append(cell)
 
-    table_markup = f'<table align="center">\n  <tr>\n' + "\n".join(cells) + "\n  </tr>\n</table>"
-    return f"{banner_img}\n\n{table_markup}"
+    table_markup = (
+        '<table align="center" border="0" style="border: none; border-collapse: collapse;">\n'
+        '  <tr>\n' + "\n".join(cells) + "\n  </tr>\n</table>"
+    )
+    return f"{header_markup}\n\n{table_markup}"
 
 
 def render_dashboard_markdown(
@@ -900,9 +1137,6 @@ def render_dashboard_markdown(
 <p align="center">
   <img src=".github/analytics/metrics.svg" alt="Repository Metrics" width="100%">
 </p>
-
-### Hall of Appreciation
-
 {hall_markup}
 {END_MARKER}"""
 
@@ -1010,12 +1244,14 @@ def run_pipeline() -> int:
 
     analytics_dir = workspace_root / ".github" / "analytics"
     assets_dir = analytics_dir / "assets"
+    supporters_dir = analytics_dir / "supporters"
     shields_dir = analytics_dir / "shields"
     readme_path = workspace_root / "README.md"
     traffic_history_file = analytics_dir / "traffic-history.json"
     activity_history_file = analytics_dir / "activity-history.json"
     dashboard_file = analytics_dir / "dashboard.json"
     metrics_svg_file = analytics_dir / "metrics.svg"
+    hall_title_svg_file = analytics_dir / "hall-title.svg"
     hall_banner_svg_file = analytics_dir / "hall-banner.svg"
     trend_svg_file = analytics_dir / "traffic-trend.svg"
     chart_file = analytics_dir / "traffic-chart.svg"  # Preserved for backward compatibility
@@ -1111,9 +1347,18 @@ def run_pipeline() -> int:
     # Ensure Action Button SVGs
     ensure_button_svgs(assets_dir)
 
-    # Generate Metrics Card SVG & Hall Banner SVG
+    # Generate Metrics Card, Golden Wings Header & Circulating Banner SVGs
     generate_metrics_card_svg(traffic_metrics, forks_count, traffic_status, metrics_svg_file)
+    generate_hall_title_svg(hall_title_svg_file)
     generate_hall_banner_svg(len(supporters), hall_banner_svg_file)
+
+    # Generate Golden Frame Supporter Cards
+    supporters_dir.mkdir(parents=True, exist_ok=True)
+    for s in supporters:
+        u = s.get("username", "")
+        if u:
+            card_file = supporters_dir / f"{u}.svg"
+            generate_supporter_card_svg(s, card_file)
 
     # Generate Traffic Trend SVGs
     generate_svg_chart(traffic_metrics.get("last5DaysRecords", []), trend_svg_file)

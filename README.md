@@ -8,21 +8,22 @@ Practical solutions, lab experiments, and reference implementations for Semester
 <p align="center">
   <img src=".github/analytics/metrics.svg" alt="Repository Metrics" width="100%">
 </p>
+<br><br>
 
-### Hall of Appreciation
+<p align="center">
+  <img src=".github/analytics/hall-title.svg" alt="Hall of Appreciation" width="620">
+</p>
 
 <p align="center">
   <img src=".github/analytics/hall-banner.svg" alt="Hall of Appreciation Banner" width="100%">
 </p>
 
-<table align="center">
+<table align="center" border="0" style="border: none; border-collapse: collapse;">
   <tr>
-    <td align="center" width="220" style="padding: 16px 24px;">
+    <td align="center" style="border: none; padding: 12px 20px;">
       <a href="https://github.com/abhi220705">
-        <img src="https://github.com/abhi220705.png?size=96" width="64" height="64" style="border-radius: 50%; border: 2px solid #58a6ff;" alt="abhi220705" /><br />
-        <b>@abhi220705</b>
-      </a><br />
-      <code>Community Fork</code>
+        <img src=".github/analytics/supporters/abhi220705.svg" width="220" alt="abhi220705" />
+      </a>
     </td>
   </tr>
 </table>

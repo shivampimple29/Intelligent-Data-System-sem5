@@ -31,7 +31,9 @@ from update_analytics import (
     initialize_activity_history,
     merge_activity_events,
     generate_metrics_card_svg,
+    generate_hall_title_svg,
     generate_hall_banner_svg,
+    generate_supporter_card_svg,
     ensure_button_svgs,
     generate_svg_chart,
     generate_shields_badges,
@@ -324,10 +326,9 @@ class TestAnalyticsDashboard(unittest.TestCase):
         self.assertIn("### Repository Insights", markdown)
         self.assertIn(".github/analytics/metrics.svg", markdown)
         self.assertNotIn(".github/analytics/traffic-trend.svg", markdown)
-        self.assertIn("### Hall of Appreciation", markdown)
-        self.assertIn("abhi220705", markdown)
-        self.assertIn("Community Fork", markdown)
+        self.assertIn(".github/analytics/hall-title.svg", markdown)
         self.assertIn(".github/analytics/hall-banner.svg", markdown)
+        self.assertIn(".github/analytics/supporters/abhi220705.svg", markdown)
 
         # Ensure NO maintainer activity dump or commit messages in public dashboard
         self.assertNotIn("Commit 📦", markdown)
@@ -340,8 +341,9 @@ class TestAnalyticsDashboard(unittest.TestCase):
         generate_hall_banner_svg(1, banner_file)
         self.assertTrue(banner_file.exists())
         b_content = banner_file.read_text(encoding="utf-8")
-        self.assertIn("COMMUNITY HALL OF APPRECIATION", b_content)
-        self.assertIn("beacon-pulse", b_content)
+        self.assertIn("tracer-line", b_content)
+        self.assertIn("Updates every day at 12:00 AM IST", b_content)
+        self.assertIn("pipe-sep", b_content)
 
         assets_dir = self.test_path / "assets"
         ensure_button_svgs(assets_dir)
@@ -354,6 +356,30 @@ class TestAnalyticsDashboard(unittest.TestCase):
         self.assertIn(".github/analytics/assets/fork.svg", readme_text)
         self.assertIn(".github/analytics/assets/follow.svg", readme_text)
         self.assertNotIn("img.shields.io/badge/⭐_Star_Repository", readme_text)
+
+    def test_19_hall_title_and_supporter_card(self):
+        """19. Verify royal golden wings title and esports frame supporter card."""
+        title_file = self.test_path / "hall-title.svg"
+        generate_hall_title_svg(title_file)
+        self.assertTrue(title_file.exists())
+        t_content = title_file.read_text(encoding="utf-8")
+        self.assertIn("HALL OF APPRECIATION", t_content)
+        self.assertIn("majestic-wing", t_content)
+
+        supporter = {
+            "username": "abhi220705",
+            "profileUrl": "https://github.com/abhi220705",
+            "avatarUrl": "https://github.com/abhi220705.png?size=96",
+            "role": "Community Fork",
+            "year": "2026",
+        }
+        card_file = self.test_path / "abhi220705.svg"
+        generate_supporter_card_svg(supporter, card_file)
+        self.assertTrue(card_file.exists())
+        c_content = card_file.read_text(encoding="utf-8")
+        self.assertIn("2026", c_content)
+        self.assertIn("@abhi220705", c_content)
+        self.assertIn("Community Fork", c_content)
 
 
 if __name__ == "__main__":

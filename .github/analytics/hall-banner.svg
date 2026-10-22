@@ -1,44 +1,60 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 70" width="100%" height="auto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 54" width="100%" height="auto">
   <defs>
-    <linearGradient id="sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#58a6ff"/>
-      <stop offset="100%" stop-color="#bc8cff"/>
+    <linearGradient id="gold-tracer" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fff8d1"/>
+      <stop offset="30%" stop-color="#ffd700"/>
+      <stop offset="70%" stop-color="#ffb300"/>
+      <stop offset="100%" stop-color="#fff8d1"/>
     </linearGradient>
+    <filter id="gold-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
     <style>
-      .banner-card { fill: #ffffff; stroke: #d0d7de; stroke-width: 1; }
-      .banner-title { font: 700 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #1f2328; letter-spacing: 0.8px; }
-      .banner-sub { font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #656d76; }
-      .beacon-core { fill: #2da44e; }
-      .beacon-pulse { fill: #2da44e; opacity: 0.3; animation: pulse 2.5s infinite ease-in-out; }
-      @keyframes pulse {
-        0% { r: 4px; opacity: 0.7; }
-        50% { r: 10px; opacity: 0.05; }
-        100% { r: 4px; opacity: 0.7; }
+      .banner-bg { fill: #0d1117; stroke: #2a2010; stroke-width: 1.5; }
+      .tracer-line {
+        stroke: url(#gold-tracer);
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        filter: url(#gold-glow);
+        fill: none;
+        stroke-dasharray: 160 701;
+        animation: circuit 3.2s linear infinite;
       }
-      @media (prefers-color-scheme: dark) {
-        .banner-card { fill: #0d1117; stroke: #30363d; }
-        .banner-title { fill: #f0f6fc; }
-        .banner-sub { fill: #8b949e; }
-        .beacon-core { fill: #3fb950; }
-        .beacon-pulse { fill: #3fb950; }
+      @keyframes circuit {
+        0% { stroke-dashoffset: 160; }
+        100% { stroke-dashoffset: -701; }
+      }
+      .banner-text {
+        font: 500 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+        fill: #e6edf3;
+        letter-spacing: 0.3px;
+      }
+      .pipe-sep {
+        font-weight: 700;
+        fill: #ffd700;
+      }
+      @media (prefers-color-scheme: light) {
+        .banner-bg { fill: #fcfaf6; stroke: #e0d0b0; }
+        .banner-text { fill: #1f2328; }
       }
     </style>
   </defs>
 
-  <rect width="820" height="70" rx="8" class="banner-card"/>
+  <!-- Background Card -->
+  <rect x="1" y="1" width="818" height="52" rx="8" class="banner-bg"/>
 
-  <!-- Pulsing Beacon -->
-  <g transform="translate(32, 35)">
-    <circle cx="0" cy="0" r="10" class="beacon-pulse"/>
-    <circle cx="0" cy="0" r="4" class="beacon-core"/>
-  </g>
+  <!-- Left Circulation (Counter-Clockwise from top-center 410,1 to bottom-center 410,53) -->
+  <path d="M 410 1 L 9 1 A 8 8 0 0 0 1 9 L 1 45 A 8 8 0 0 0 9 53 L 410 53" class="tracer-line"/>
 
-  <!-- Content -->
-  <text x="56" y="29" class="banner-title">COMMUNITY HALL OF APPRECIATION</text>
-  <text x="56" y="49" class="banner-sub">Star or fork this repository to join the wall of appreciation • Inducted nightly at 12:00 AM IST</text>
+  <!-- Right Circulation (Clockwise from top-center 410,1 to bottom-center 410,53) -->
+  <path d="M 410 1 L 811 1 A 8 8 0 0 1 819 9 L 819 45 A 8 8 0 0 1 811 53 L 410 53" class="tracer-line"/>
 
-  <!-- Vector Sparkle Icon -->
-  <g transform="translate(774, 25)">
-    <path d="M10 0L12.5 7.5L20 10L12.5 12.5L10 20L7.5 12.5L0 10L7.5 7.5L10 0Z" fill="url(#sparkle-grad)" opacity="0.85"/>
-  </g>
+  <!-- Central Clean Announcement Text -->
+  <text x="410" y="31" text-anchor="middle" class="banner-text">
+    Star or fork this repository to join the wall of appreciation <tspan class="pipe-sep">&nbsp;|&nbsp;</tspan> Updates every day at 12:00 AM IST
+  </text>
 </svg>
