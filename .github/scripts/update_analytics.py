@@ -17,6 +17,7 @@ import json
 import math
 import os
 import re
+import subprocess
 import sys
 import time
 import urllib.error
@@ -109,6 +110,26 @@ def get_current_timestamps() -> Tuple[str, str]:
     now_utc = datetime.now(UTC)
     now_ist_str = format_ist(now_utc)
     return now_utc.isoformat(), now_ist_str
+
+
+def get_git_credential_token() -> Optional[str]:
+    """Retrieve GitHub token from local Git Credential Manager as fallback."""
+    try:
+        proc = subprocess.run(
+            ["git", "credential", "fill"],
+            input="protocol=https\nhost=github.com\n",
+            text=True,
+            capture_output=True,
+            timeout=5,
+        )
+        for line in proc.stdout.splitlines():
+            if line.startswith("password="):
+                val = line.split("=", 1)[1].strip()
+                if val:
+                    return val
+    except Exception:
+        pass
+    return None
 
 
 # -----------------------------------------------------------------------------
@@ -411,7 +432,11 @@ def generate_metrics_card_svg(
     """
     output_filepath.parent.mkdir(parents=True, exist_ok=True)
 
-    has_traffic = (metrics.get("availableDaysCount", 0) > 0) and (traffic_status == "success")
+    has_traffic = (
+        metrics.get("recordedCumulativeClones", 0) > 0
+        or metrics.get("recordedCumulativeViews", 0) > 0
+        or metrics.get("availableDaysCount", 0) > 0
+    )
 
     # Values & subtitles
     if has_traffic:
@@ -823,6 +848,11 @@ def run_pipeline() -> int:
 
     gh_traffic_token = os.environ.get("GH_TRAFFIC_STATS_TOKEN")
     github_token = os.environ.get("GITHUB_TOKEN")
+    if not gh_traffic_token and not github_token:
+        cred_token = get_git_credential_token()
+        if cred_token:
+            gh_traffic_token = cred_token
+            github_token = cred_token
 
     client = GitHubAPIClient(traffic_token=gh_traffic_token, fallback_token=github_token)
 
@@ -856,7 +886,7 @@ def run_pipeline() -> int:
     clones_payload = None
     views_payload = None
 
-    c_status, c_data, _ = client.request(f"repos/{repo_name}/traffic/clones", token=client.traffic_token)
+    c_status, c_data, _ = client.request(f"repos/{repo_name}/traffic/clones?per=day", token=client.traffic_token)
     if c_status == 200:
         clones_payload = c_data
     elif c_status in (401, 403):
@@ -865,7 +895,7 @@ def run_pipeline() -> int:
     else:
         traffic_status = "error"
 
-    v_status, v_data, _ = client.request(f"repos/{repo_name}/traffic/views", token=client.traffic_token)
+    v_status, v_data, _ = client.request(f"repos/{repo_name}/traffic/views?per=day", token=client.traffic_token)
     if v_status == 200:
         views_payload = v_data
     elif v_status in (401, 403):
