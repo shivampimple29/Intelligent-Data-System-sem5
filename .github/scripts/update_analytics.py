@@ -531,6 +531,132 @@ def generate_metrics_card_svg(
     atomic_write_text(output_filepath, svg_content)
 
 
+def generate_hall_banner_svg(supporters_count: int, output_filepath: Path) -> None:
+    """
+    Generate an animated SVG banner for the Hall of Appreciation.
+    Features a pulsing beacon, sleek dark mode backdrop, and clean typography.
+    """
+    output_filepath.parent.mkdir(parents=True, exist_ok=True)
+
+    if supporters_count > 0:
+        title = "COMMUNITY HALL OF APPRECIATION"
+        subtitle = "Star or fork this repository to join the wall of appreciation • Inducted nightly at 12:00 AM IST"
+    else:
+        title = "BE THE FOUNDING SUPPORTER"
+        subtitle = "Be the very first to star or fork this repository and claim your spot • Inducted nightly at 12:00 AM IST"
+
+    svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 70" width="100%" height="auto">
+  <defs>
+    <linearGradient id="sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#58a6ff"/>
+      <stop offset="100%" stop-color="#bc8cff"/>
+    </linearGradient>
+    <style>
+      .banner-card {{ fill: #ffffff; stroke: #d0d7de; stroke-width: 1; }}
+      .banner-title {{ font: 700 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #1f2328; letter-spacing: 0.8px; }}
+      .banner-sub {{ font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #656d76; }}
+      .beacon-core {{ fill: #2da44e; }}
+      .beacon-pulse {{ fill: #2da44e; opacity: 0.3; animation: pulse 2.5s infinite ease-in-out; }}
+      @keyframes pulse {{
+        0% {{ r: 4px; opacity: 0.7; }}
+        50% {{ r: 10px; opacity: 0.05; }}
+        100% {{ r: 4px; opacity: 0.7; }}
+      }}
+      @media (prefers-color-scheme: dark) {{
+        .banner-card {{ fill: #0d1117; stroke: #30363d; }}
+        .banner-title {{ fill: #f0f6fc; }}
+        .banner-sub {{ fill: #8b949e; }}
+        .beacon-core {{ fill: #3fb950; }}
+        .beacon-pulse {{ fill: #3fb950; }}
+      }}
+    </style>
+  </defs>
+
+  <rect width="820" height="70" rx="8" class="banner-card"/>
+
+  <!-- Pulsing Beacon -->
+  <g transform="translate(32, 35)">
+    <circle cx="0" cy="0" r="10" class="beacon-pulse"/>
+    <circle cx="0" cy="0" r="4" class="beacon-core"/>
+  </g>
+
+  <!-- Content -->
+  <text x="56" y="29" class="banner-title">{title}</text>
+  <text x="56" y="49" class="banner-sub">{subtitle}</text>
+
+  <!-- Vector Sparkle Icon -->
+  <g transform="translate(774, 25)">
+    <path d="M10 0L12.5 7.5L20 10L12.5 12.5L10 20L7.5 12.5L0 10L7.5 7.5L10 0Z" fill="url(#sparkle-grad)" opacity="0.85"/>
+  </g>
+</svg>
+"""
+    atomic_write_text(output_filepath, svg_content)
+
+
+def ensure_button_svgs(assets_dir: Path) -> None:
+    """Ensure bespoke SVG action buttons exist in assets directory."""
+    assets_dir.mkdir(parents=True, exist_ok=True)
+
+    star_svg = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 36" width="160" height="36">
+  <defs>
+    <style>
+      .btn-bg { fill: #161b22; stroke: #30363d; stroke-width: 1; transition: all 0.2s ease; }
+      .btn-bg:hover { stroke: #e3b341; fill: #1c2128; }
+      .btn-text { font: 600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #f0f6fc; }
+      .star-icon { fill: #e3b341; stroke: #e3b341; stroke-width: 1; }
+    </style>
+  </defs>
+  <rect width="158" height="34" x="1" y="1" rx="8" class="btn-bg"/>
+  <g transform="translate(16, 9)">
+    <polygon points="9,0.5 11.8,6.2 18,7.1 13.5,11.5 14.6,17.7 9,14.7 3.4,17.7 4.5,11.5 0,7.1 6.2,6.2" class="star-icon" transform="scale(0.9)"/>
+  </g>
+  <text x="44" y="22" class="btn-text">Star Repository</text>
+</svg>
+"""
+    fork_svg = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 145 36" width="145" height="36">
+  <defs>
+    <style>
+      .btn-bg { fill: #161b22; stroke: #30363d; stroke-width: 1; transition: all 0.2s ease; }
+      .btn-bg:hover { stroke: #58a6ff; fill: #1c2128; }
+      .btn-text { font: 600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #f0f6fc; }
+      .fork-icon { stroke: #58a6ff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    </style>
+  </defs>
+  <rect width="143" height="34" x="1" y="1" rx="8" class="btn-bg"/>
+  <g transform="translate(16, 9)">
+    <circle cx="9" cy="14" r="2.5" class="fork-icon"/>
+    <circle cx="4" cy="4" r="2.5" class="fork-icon"/>
+    <circle cx="14" cy="4" r="2.5" class="fork-icon"/>
+    <path d="M4 6.5v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1" class="fork-icon"/>
+    <path d="M9 9.5v2" class="fork-icon"/>
+  </g>
+  <text x="44" y="22" class="btn-text">Fork Project</text>
+</svg>
+"""
+    follow_svg = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 205 36" width="205" height="36">
+  <defs>
+    <style>
+      .btn-bg { fill: #161b22; stroke: #30363d; stroke-width: 1; transition: all 0.2s ease; }
+      .btn-bg:hover { stroke: #bc8cff; fill: #1c2128; }
+      .btn-text { font: 600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #f0f6fc; }
+      .user-icon { stroke: #bc8cff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    </style>
+  </defs>
+  <rect width="203" height="34" x="1" y="1" rx="8" class="btn-bg"/>
+  <g transform="translate(16, 9)">
+    <path d="M13 16v-1.5a3 3 0 0 0-3-3H4a3 3 0 0 0-3 3V16" class="user-icon"/>
+    <circle cx="7" cy="5" r="3" class="user-icon"/>
+    <line x1="16" y1="7" x2="16" y2="13" class="user-icon"/>
+    <line x1="13" y1="10" x2="19" y2="10" class="user-icon"/>
+  </g>
+  <text x="44" y="22" class="btn-text">Follow @shivampimple29</text>
+</svg>
+"""
+    atomic_write_text(assets_dir / "star.svg", star_svg)
+    atomic_write_text(assets_dir / "fork.svg", fork_svg)
+    atomic_write_text(assets_dir / "follow.svg", follow_svg)
+
+
 def generate_svg_chart(
     records: List[Dict[str, Any]],
     output_filepath: Path,
@@ -713,41 +839,46 @@ def generate_shields_badges(
 
 def render_hall_of_appreciation(supporters: List[Dict[str, str]]) -> str:
     """
-    Render the Hall of Appreciation recognition gallery with onboarding marketing text.
+    Render the Hall of Appreciation recognition gallery.
+    Features an animated status banner and a spacious, elegant supporter grid.
     Displays verified public supporters with avatar, username, and role.
     Respects strict privacy: never associates anyone with cloning/viewing activity.
     """
-    if supporters:
-        intro_text = (
-            "> ⭐ **Want your profile featured here?** Star or fork this repository to be "
-            "permanently recognized in the Hall of Appreciation! New supporters are automatically "
-            "inducted every night at 12:00 AM IST.\n\n"
-        )
-        cells = []
-        for s in supporters[:15]:
-            u = s.get("username", "")
-            p_url = s.get("profileUrl", f"https://github.com/{u}")
-            a_url = s.get("avatarUrl", f"https://github.com/{u}.png?size=96")
-            role = s.get("role", "Community Supporter")
+    banner_img = (
+        '<p align="center">\n'
+        '  <img src=".github/analytics/hall-banner.svg" alt="Hall of Appreciation Banner" width="100%">\n'
+        '</p>'
+    )
+    if not supporters:
+        return banner_img
 
-            cell = (
-                f'    <td align="center" width="160">\n'
-                f'      <a href="{p_url}">\n'
-                f'        <img src="{a_url}" width="48" height="48" alt="{u}" /><br />\n'
-                f'        <b>@{u}</b>\n'
-                f'      </a><br />\n'
-                f'      <sub>{role}</sub>\n'
-                f'    </td>'
-            )
-            cells.append(cell)
+    cells = []
+    for s in supporters[:15]:
+        u = s.get("username", "")
+        p_url = s.get("profileUrl", f"https://github.com/{u}")
+        a_url = s.get("avatarUrl", f"https://github.com/{u}.png?size=96")
+        role = s.get("role", "Community Supporter")
 
-        table_markup = f'<table align="center">\n  <tr>\n' + "\n".join(cells) + "\n  </tr>\n</table>"
-        return intro_text + table_markup
-    else:
-        return (
-            "> 🌟 **Be the very first supporter!** Star or fork this repository to claim your "
-            "exclusive spot in the Hall of Appreciation! Updates automatically every night at 12:00 AM IST.\n"
+        if "Star & Fork" in role:
+            border_color = "#bc8cff"
+        elif "Star" in role:
+            border_color = "#e3b341"
+        else:
+            border_color = "#58a6ff"
+
+        cell = (
+            f'    <td align="center" width="220" style="padding: 16px 24px;">\n'
+            f'      <a href="{p_url}">\n'
+            f'        <img src="{a_url}" width="64" height="64" style="border-radius: 50%; border: 2px solid {border_color};" alt="{u}" /><br />\n'
+            f'        <b>@{u}</b>\n'
+            f'      </a><br />\n'
+            f'      <code>{role}</code>\n'
+            f'    </td>'
         )
+        cells.append(cell)
+
+    table_markup = f'<table align="center">\n  <tr>\n' + "\n".join(cells) + "\n  </tr>\n</table>"
+    return f"{banner_img}\n\n{table_markup}"
 
 
 def render_dashboard_markdown(
@@ -807,15 +938,15 @@ def update_readme_content(original_readme: str, new_analytics_section: str) -> s
         "If this repository helps your studies, practicals, or reference work, support the project:\n\n"
         '<p align="left">\n'
         '  <a href="https://github.com/shivampimple29/Intelligent-Data-System-sem5/stargazers">\n'
-        '    <img src="https://img.shields.io/badge/⭐_Star_Repository-238636?style=for-the-badge&logo=github&logoColor=white" alt="Star Repository" />\n'
+        '    <img src=".github/analytics/assets/star.svg" alt="Star Repository" height="36" />\n'
         '  </a>\n'
-        '  &nbsp;\n'
+        '  &nbsp;&nbsp;\n'
         '  <a href="https://github.com/shivampimple29/Intelligent-Data-System-sem5/fork">\n'
-        '    <img src="https://img.shields.io/badge/🍴_Fork_Project-1f6feb?style=for-the-badge&logo=github&logoColor=white" alt="Fork Project" />\n'
+        '    <img src=".github/analytics/assets/fork.svg" alt="Fork Project" height="36" />\n'
         '  </a>\n'
-        '  &nbsp;\n'
+        '  &nbsp;&nbsp;\n'
         '  <a href="https://github.com/shivampimple29">\n'
-        '    <img src="https://img.shields.io/badge/👤_Follow-30363d?style=for-the-badge&logo=github&logoColor=white" alt="Follow Author" />\n'
+        '    <img src=".github/analytics/assets/follow.svg" alt="Follow @shivampimple29" height="36" />\n'
         '  </a>\n'
         '</p>\n\n'
         "```bash\n"
@@ -878,12 +1009,14 @@ def run_pipeline() -> int:
     client = GitHubAPIClient(traffic_token=gh_traffic_token, fallback_token=github_token)
 
     analytics_dir = workspace_root / ".github" / "analytics"
+    assets_dir = analytics_dir / "assets"
     shields_dir = analytics_dir / "shields"
     readme_path = workspace_root / "README.md"
     traffic_history_file = analytics_dir / "traffic-history.json"
     activity_history_file = analytics_dir / "activity-history.json"
     dashboard_file = analytics_dir / "dashboard.json"
     metrics_svg_file = analytics_dir / "metrics.svg"
+    hall_banner_svg_file = analytics_dir / "hall-banner.svg"
     trend_svg_file = analytics_dir / "traffic-trend.svg"
     chart_file = analytics_dir / "traffic-chart.svg"  # Preserved for backward compatibility
 
@@ -975,8 +1108,12 @@ def run_pipeline() -> int:
 
     # 5. Generate Visualizations, Snapshot & Update README
     print("[5/5] Generating premium visuals and updating README...")
-    # Generate Metrics Card SVG
+    # Ensure Action Button SVGs
+    ensure_button_svgs(assets_dir)
+
+    # Generate Metrics Card SVG & Hall Banner SVG
     generate_metrics_card_svg(traffic_metrics, forks_count, traffic_status, metrics_svg_file)
+    generate_hall_banner_svg(len(supporters), hall_banner_svg_file)
 
     # Generate Traffic Trend SVGs
     generate_svg_chart(traffic_metrics.get("last5DaysRecords", []), trend_svg_file)

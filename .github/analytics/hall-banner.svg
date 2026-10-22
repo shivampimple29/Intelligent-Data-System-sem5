@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 70" width="100%" height="auto">
+  <defs>
+    <linearGradient id="sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#58a6ff"/>
+      <stop offset="100%" stop-color="#bc8cff"/>
+    </linearGradient>
+    <style>
+      .banner-card { fill: #ffffff; stroke: #d0d7de; stroke-width: 1; }
+      .banner-title { font: 700 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #1f2328; letter-spacing: 0.8px; }
+      .banner-sub { font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #656d76; }
+      .beacon-core { fill: #2da44e; }
+      .beacon-pulse { fill: #2da44e; opacity: 0.3; animation: pulse 2.5s infinite ease-in-out; }
+      @keyframes pulse {
+        0% { r: 4px; opacity: 0.7; }
+        50% { r: 10px; opacity: 0.05; }
+        100% { r: 4px; opacity: 0.7; }
+      }
+      @media (prefers-color-scheme: dark) {
+        .banner-card { fill: #0d1117; stroke: #30363d; }
+        .banner-title { fill: #f0f6fc; }
+        .banner-sub { fill: #8b949e; }
+        .beacon-core { fill: #3fb950; }
+        .beacon-pulse { fill: #3fb950; }
+      }
+    </style>
+  </defs>
+
+  <rect width="820" height="70" rx="8" class="banner-card"/>
+
+  <!-- Pulsing Beacon -->
+  <g transform="translate(32, 35)">
+    <circle cx="0" cy="0" r="10" class="beacon-pulse"/>
+    <circle cx="0" cy="0" r="4" class="beacon-core"/>
+  </g>
+
+  <!-- Content -->
+  <text x="56" y="29" class="banner-title">COMMUNITY HALL OF APPRECIATION</text>
+  <text x="56" y="49" class="banner-sub">Star or fork this repository to join the wall of appreciation • Inducted nightly at 12:00 AM IST</text>
+
+  <!-- Vector Sparkle Icon -->
+  <g transform="translate(774, 25)">
+    <path d="M10 0L12.5 7.5L20 10L12.5 12.5L10 20L7.5 12.5L0 10L7.5 7.5L10 0Z" fill="url(#sparkle-grad)" opacity="0.85"/>
+  </g>
+</svg>

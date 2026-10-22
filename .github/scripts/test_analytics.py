@@ -31,6 +31,8 @@ from update_analytics import (
     initialize_activity_history,
     merge_activity_events,
     generate_metrics_card_svg,
+    generate_hall_banner_svg,
+    ensure_button_svgs,
     generate_svg_chart,
     generate_shields_badges,
     render_hall_of_appreciation,
@@ -325,12 +327,33 @@ class TestAnalyticsDashboard(unittest.TestCase):
         self.assertIn("### Hall of Appreciation", markdown)
         self.assertIn("abhi220705", markdown)
         self.assertIn("Community Fork", markdown)
-        self.assertIn("Want your profile featured here?", markdown)
+        self.assertIn(".github/analytics/hall-banner.svg", markdown)
 
         # Ensure NO maintainer activity dump or commit messages in public dashboard
         self.assertNotIn("Commit 📦", markdown)
         self.assertNotIn("chore(analytics)", markdown)
         self.assertNotIn("Traffic API Authentication Setup", markdown)
+
+    def test_18_hall_banner_and_buttons(self):
+        """18. Verify hall banner SVG generation and bespoke action buttons."""
+        banner_file = self.test_path / "hall-banner.svg"
+        generate_hall_banner_svg(1, banner_file)
+        self.assertTrue(banner_file.exists())
+        b_content = banner_file.read_text(encoding="utf-8")
+        self.assertIn("COMMUNITY HALL OF APPRECIATION", b_content)
+        self.assertIn("beacon-pulse", b_content)
+
+        assets_dir = self.test_path / "assets"
+        ensure_button_svgs(assets_dir)
+        self.assertTrue((assets_dir / "star.svg").exists())
+        self.assertTrue((assets_dir / "fork.svg").exists())
+        self.assertTrue((assets_dir / "follow.svg").exists())
+
+        readme_text = update_readme_content("# Test Readme", "<!-- REPOSITORY_ANALYTICS_START -->\n<!-- REPOSITORY_ANALYTICS_END -->")
+        self.assertIn(".github/analytics/assets/star.svg", readme_text)
+        self.assertIn(".github/analytics/assets/fork.svg", readme_text)
+        self.assertIn(".github/analytics/assets/follow.svg", readme_text)
+        self.assertNotIn("img.shields.io/badge/⭐_Star_Repository", readme_text)
 
 
 if __name__ == "__main__":

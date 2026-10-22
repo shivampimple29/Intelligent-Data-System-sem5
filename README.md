@@ -11,16 +11,18 @@ Practical solutions, lab experiments, and reference implementations for Semester
 
 ### Hall of Appreciation
 
-> ⭐ **Want your profile featured here?** Star or fork this repository to be permanently recognized in the Hall of Appreciation! New supporters are automatically inducted every night at 12:00 AM IST.
+<p align="center">
+  <img src=".github/analytics/hall-banner.svg" alt="Hall of Appreciation Banner" width="100%">
+</p>
 
 <table align="center">
   <tr>
-    <td align="center" width="160">
+    <td align="center" width="220" style="padding: 16px 24px;">
       <a href="https://github.com/abhi220705">
-        <img src="https://github.com/abhi220705.png?size=96" width="48" height="48" alt="abhi220705" /><br />
+        <img src="https://github.com/abhi220705.png?size=96" width="64" height="64" style="border-radius: 50%; border: 2px solid #58a6ff;" alt="abhi220705" /><br />
         <b>@abhi220705</b>
       </a><br />
-      <sub>Community Fork</sub>
+      <code>Community Fork</code>
     </td>
   </tr>
 </table>
@@ -34,15 +36,15 @@ If this repository helps your studies, practicals, or reference work, support th
 
 <p align="left">
   <a href="https://github.com/shivampimple29/Intelligent-Data-System-sem5/stargazers">
-    <img src="https://img.shields.io/badge/⭐_Star_Repository-238636?style=for-the-badge&logo=github&logoColor=white" alt="Star Repository" />
+    <img src=".github/analytics/assets/star.svg" alt="Star Repository" height="36" />
   </a>
-  &nbsp;
+  &nbsp;&nbsp;
   <a href="https://github.com/shivampimple29/Intelligent-Data-System-sem5/fork">
-    <img src="https://img.shields.io/badge/🍴_Fork_Project-1f6feb?style=for-the-badge&logo=github&logoColor=white" alt="Fork Project" />
+    <img src=".github/analytics/assets/fork.svg" alt="Fork Project" height="36" />
   </a>
-  &nbsp;
+  &nbsp;&nbsp;
   <a href="https://github.com/shivampimple29">
-    <img src="https://img.shields.io/badge/👤_Follow-30363d?style=for-the-badge&logo=github&logoColor=white" alt="Follow Author" />
+    <img src=".github/analytics/assets/follow.svg" alt="Follow @shivampimple29" height="36" />
   </a>
 </p>
 
