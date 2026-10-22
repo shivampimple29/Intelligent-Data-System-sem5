@@ -25,6 +25,16 @@ Practical solutions, lab experiments, and reference implementations for Semester
         <img src=".github/analytics/supporters/abhi220705.svg" width="220" alt="abhi220705" />
       </a>
     </td>
+    <td align="center" style="border: none; padding: 12px 20px;">
+      <a href="https://github.com/AshishWaghmare12">
+        <img src=".github/analytics/supporters/AshishWaghmare12.svg" width="220" alt="AshishWaghmare12" />
+      </a>
+    </td>
+    <td align="center" style="border: none; padding: 12px 20px;">
+      <a href="https://github.com/ashishW32">
+        <img src=".github/analytics/supporters/ashishW32.svg" width="220" alt="ashishW32" />
+      </a>
+    </td>
   </tr>
 </table>
 <!-- REPOSITORY_ANALYTICS_END -->
