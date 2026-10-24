@@ -892,9 +892,28 @@ def ensure_button_svgs(assets_dir: Path) -> None:
   <text x="44" y="22" class="btn-text">Follow @shivampimple29</text>
 </svg>
 """
+    doubt_svg = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 145 36" width="145" height="36">
+  <defs>
+    <style>
+      .btn-bg { fill: #161b22; stroke: #30363d; stroke-width: 1; transition: all 0.2s ease; }
+      .btn-bg:hover { stroke: #3fb950; fill: #1c2128; }
+      .btn-text { font: 600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; fill: #f0f6fc; }
+      .doubt-icon { stroke: #3fb950; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    </style>
+  </defs>
+  <rect width="143" height="34" x="1" y="1" rx="8" class="btn-bg"/>
+  <g transform="translate(16, 9)">
+    <path d="M14 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2v3l3.5-3H14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z" class="doubt-icon"/>
+    <path d="M7.5 6a1.5 1.5 0 0 1 2.8.6c0 1-1.3 1.2-1.3 2" class="doubt-icon"/>
+    <circle cx="9" cy="11.2" r="0.8" fill="#3fb950"/>
+  </g>
+  <text x="42" y="22" class="btn-text">Ask a Doubt</text>
+</svg>
+"""
     atomic_write_text(assets_dir / "star.svg", star_svg)
     atomic_write_text(assets_dir / "fork.svg", fork_svg)
     atomic_write_text(assets_dir / "follow.svg", follow_svg)
+    atomic_write_text(assets_dir / "doubt.svg", doubt_svg)
 
 
 def generate_svg_chart(
@@ -1182,6 +1201,10 @@ def update_readme_content(original_readme: str, new_analytics_section: str) -> s
         '  <a href="https://github.com/shivampimple29">\n'
         '    <img src=".github/analytics/assets/follow.svg" alt="Follow @shivampimple29" height="36" />\n'
         '  </a>\n'
+        '  &nbsp;&nbsp;\n'
+        '  <a href="https://github.com/shivampimple29/Intelligent-Data-System-sem5/issues">\n'
+        '    <img src=".github/analytics/assets/doubt.svg" alt="Ask a Doubt" height="36" />\n'
+        '  </a>\n'
         '</p>\n\n'
         "```bash\n"
         "# Clone this repository\n"
@@ -1304,6 +1327,7 @@ def run_pipeline() -> int:
     # 4. Fetch Verified Public Supporters for Hall of Appreciation
     print("[4/5] Identifying verified public supporters...")
     supporters_map: Dict[str, Dict[str, str]] = {}
+    current_year = str(now_ist_str[:4]) if now_ist_str else "2026"
 
     # Public Forks
     f_status, forks_data, _ = client.request(f"repos/{repo_name}/forks?sort=newest&per_page=50", token=client.general_token)
@@ -1312,11 +1336,14 @@ def run_pipeline() -> int:
             owner = fork.get("owner", {})
             u_login = owner.get("login")
             if u_login:
+                created_at = fork.get("created_at") or ""
+                fork_year = created_at[:4] if len(created_at) >= 4 and created_at[:4].isdigit() else current_year
                 supporters_map[u_login] = {
                     "username": u_login,
                     "profileUrl": owner.get("html_url", f"https://github.com/{u_login}"),
                     "avatarUrl": f"https://github.com/{u_login}.png?size=96",
                     "role": "Community Fork",
+                    "year": fork_year,
                 }
 
     # Public Stargazers
@@ -1330,14 +1357,20 @@ def run_pipeline() -> int:
             user = star.get("user", {})
             u_login = user.get("login")
             if u_login:
+                starred_at = star.get("starred_at") or ""
+                star_year = starred_at[:4] if len(starred_at) >= 4 and starred_at[:4].isdigit() else current_year
                 if u_login in supporters_map:
                     supporters_map[u_login]["role"] = "Community Star & Fork"
+                    existing_year = supporters_map[u_login].get("year", current_year)
+                    if star_year < existing_year:
+                        supporters_map[u_login]["year"] = star_year
                 else:
                     supporters_map[u_login] = {
                         "username": u_login,
                         "profileUrl": user.get("html_url", f"https://github.com/{u_login}"),
                         "avatarUrl": f"https://github.com/{u_login}.png?size=96",
                         "role": "Community Star",
+                        "year": star_year,
                     }
 
     supporters = list(supporters_map.values())

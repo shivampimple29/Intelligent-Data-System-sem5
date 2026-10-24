@@ -57,6 +57,10 @@ If this repository helps your studies, practicals, or reference work, support th
   <a href="https://github.com/shivampimple29">
     <img src=".github/analytics/assets/follow.svg" alt="Follow @shivampimple29" height="36" />
   </a>
+  &nbsp;&nbsp;
+  <a href="https://github.com/shivampimple29/Intelligent-Data-System-sem5/issues">
+    <img src=".github/analytics/assets/doubt.svg" alt="Ask a Doubt" height="36" />
+  </a>
 </p>
 
 ```bash

@@ -350,15 +350,18 @@ class TestAnalyticsDashboard(unittest.TestCase):
         self.assertTrue((assets_dir / "star.svg").exists())
         self.assertTrue((assets_dir / "fork.svg").exists())
         self.assertTrue((assets_dir / "follow.svg").exists())
+        self.assertTrue((assets_dir / "doubt.svg").exists())
 
         readme_text = update_readme_content("# Test Readme", "<!-- REPOSITORY_ANALYTICS_START -->\n<!-- REPOSITORY_ANALYTICS_END -->")
         self.assertIn(".github/analytics/assets/star.svg", readme_text)
         self.assertIn(".github/analytics/assets/fork.svg", readme_text)
         self.assertIn(".github/analytics/assets/follow.svg", readme_text)
+        self.assertIn(".github/analytics/assets/doubt.svg", readme_text)
+        self.assertIn("/issues", readme_text)
         self.assertNotIn("img.shields.io/badge/⭐_Star_Repository", readme_text)
 
     def test_19_hall_title_and_supporter_card(self):
-        """19. Verify royal golden wings title and esports frame supporter card."""
+        """19. Verify royal golden wings title and esports frame supporter card with dynamic year."""
         title_file = self.test_path / "hall-title.svg"
         generate_hall_title_svg(title_file)
         self.assertTrue(title_file.exists())
@@ -366,20 +369,35 @@ class TestAnalyticsDashboard(unittest.TestCase):
         self.assertIn("HALL OF APPRECIATION", t_content)
         self.assertIn("majestic-wing", t_content)
 
-        supporter = {
+        supporter_2026 = {
             "username": "abhi220705",
             "profileUrl": "https://github.com/abhi220705",
             "avatarUrl": "https://github.com/abhi220705.png?size=96",
             "role": "Community Fork",
             "year": "2026",
         }
-        card_file = self.test_path / "abhi220705.svg"
-        generate_supporter_card_svg(supporter, card_file)
-        self.assertTrue(card_file.exists())
-        c_content = card_file.read_text(encoding="utf-8")
-        self.assertIn("2026", c_content)
-        self.assertIn("@abhi220705", c_content)
-        self.assertIn("Community Fork", c_content)
+        card_file_2026 = self.test_path / "abhi220705.svg"
+        generate_supporter_card_svg(supporter_2026, card_file_2026)
+        self.assertTrue(card_file_2026.exists())
+        c_content_2026 = card_file_2026.read_text(encoding="utf-8")
+        self.assertIn("2026", c_content_2026)
+        self.assertIn("@abhi220705", c_content_2026)
+        self.assertIn("Community Fork", c_content_2026)
+
+        # Verify dynamic future year (e.g., 2027 supporter)
+        supporter_2027 = {
+            "username": "futureUser",
+            "profileUrl": "https://github.com/futureUser",
+            "avatarUrl": "https://github.com/futureUser.png?size=96",
+            "role": "Community Star",
+            "year": "2027",
+        }
+        card_file_2027 = self.test_path / "futureUser.svg"
+        generate_supporter_card_svg(supporter_2027, card_file_2027)
+        self.assertTrue(card_file_2027.exists())
+        c_content_2027 = card_file_2027.read_text(encoding="utf-8")
+        self.assertIn("2027", c_content_2027)
+        self.assertIn("@futureUser", c_content_2027)
 
 
 if __name__ == "__main__":
