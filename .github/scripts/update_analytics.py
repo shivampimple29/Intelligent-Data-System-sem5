@@ -14,6 +14,7 @@ Zero external dependencies required (uses standard library only).
 from __future__ import annotations
 
 import base64
+import html
 import json
 import math
 import os
@@ -144,7 +145,7 @@ class GitHubAPIClient:
         self.traffic_token = traffic_token or fallback_token
         self.general_token = fallback_token or traffic_token
         self.api_base = "https://api.github.com"
-        self.user_agent = "IntelligentDataSystems-AnalyticsBot/2.0"
+        self.user_agent = "Repository-AnalyticsBot/2.0"
 
     def request(
         self,
@@ -687,7 +688,7 @@ def generate_hall_banner_svg(supporters_count: int, output_filepath: Path) -> No
 
   <!-- Central Clean Announcement Text -->
   <text x="410" y="31" text-anchor="middle" class="banner-text">
-    {announcement} <tspan class="pipe-sep"> | </tspan> Updates every day at 12:00 AM IST
+    {announcement} <tspan class="pipe-sep"> | </tspan> Updates every day at 12:00 AM UTC
   </text>
 </svg>
 """
@@ -704,10 +705,12 @@ def generate_supporter_card_svg(
     embedded avatar image, username, and role badge.
     """
     output_filepath.parent.mkdir(parents=True, exist_ok=True)
-    u = supporter.get("username", "")
-    role = supporter.get("role", "Community Fork")
-    year = supporter.get("year", "2026")
-    avatar_url = supporter.get("avatarUrl", f"https://github.com/{u}.png?size=96")
+    u_raw = str(supporter.get("username", ""))
+    u_slug = re.sub(r"[^a-zA-Z0-9_-]", "_", u_raw)
+    u = html.escape(u_raw)
+    role = html.escape(str(supporter.get("role", "Community Fork")))
+    year = html.escape(str(supporter.get("year", "2026")))
+    avatar_url = supporter.get("avatarUrl", f"https://github.com/{u_raw}.png?size=96")
 
     # Fetch avatar bytes and convert to base64 for offline & camo resilience
     avatar_data_uri = avatar_url
@@ -744,11 +747,11 @@ def generate_supporter_card_svg(
     </linearGradient>
 
     <!-- Clip path for the square avatar inside the frame -->
-    <clipPath id="avatar-clip-{u}">
+    <clipPath id="avatar-clip-{u_slug}">
       <rect x="47" y="47" width="126" height="126" rx="4"/>
     </clipPath>
 
-    <filter id="royal-shadow-{u}" x="-20%" y="-20%" width="140%" height="140%">
+    <filter id="royal-shadow-{u_slug}" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.8"/>
     </filter>
 
@@ -777,13 +780,13 @@ def generate_supporter_card_svg(
   </defs>
 
   <!-- ==================== AVATAR (INSIDE FRAME) ==================== -->
-  <g filter="url(#royal-shadow-{u})">
+  <g filter="url(#royal-shadow-{u_slug})">
     <rect x="47" y="47" width="126" height="126" rx="4" fill="#0d1117"/>
-    <image href="{avatar_data_uri}" x="47" y="47" width="126" height="126" clip-path="url(#avatar-clip-{u})" preserveAspectRatio="xMidYMid slice"/>
+    <image href="{avatar_data_uri}" x="47" y="47" width="126" height="126" clip-path="url(#avatar-clip-{u_slug})" preserveAspectRatio="xMidYMid slice"/>
   </g>
 
   <!-- ==================== ROYAL GOLDEN FRAME ==================== -->
-  <g filter="url(#royal-shadow-{u})">
+  <g filter="url(#royal-shadow-{u_slug})">
     <!-- Outer Main Gold Border with Chamfered Corners -->
     <path d="M 54 40 L 166 40 L 180 54 L 180 166 L 166 180 L 54 180 L 40 166 L 40 54 Z"
           fill="none" stroke="url(#frame-gold-main)" stroke-width="8" stroke-linejoin="miter"/>
@@ -1162,7 +1165,56 @@ def render_dashboard_markdown(
     return section
 
 
-def update_readme_content(original_readme: str, new_analytics_section: str) -> str:
+REPO_METADATA: Dict[str, Tuple[str, str]] = {
+    "Ethical-Hacking-and-Forensics-sem5": (
+        "Ethical Hacking and Forensics",
+        "Practical solutions, lab experiments, and reference implementations for Semester 5 Ethical Hacking and Forensics.",
+    ),
+    "IoT-sem5": (
+        "Internet of Things",
+        "Practical solutions, lab experiments, and reference implementations for Semester 5 Internet of Things.",
+    ),
+    "Security-Lab-semV": (
+        "Security Lab",
+        "Practical solutions, lab experiments, and reference implementations for Semester 5 Security Lab.",
+    ),
+    "WebX": (
+        "WebX",
+        "Practical solutions, lab experiments, and reference implementations for Semester 5 WebX.",
+    ),
+    "Intelligent-Data-System-sem5": (
+        "Intelligent Data Systems",
+        "Practical solutions, lab experiments, and reference implementations for Semester 5 Intelligent Data Systems.",
+    ),
+}
+
+
+def get_git_remote_repo_name(workspace_root: Path) -> Optional[str]:
+    """Extract owner/repo from local git remote origin url if available."""
+    try:
+        res = subprocess.run(
+            ["git", "config", "--get", "remote.origin.url"],
+            cwd=str(workspace_root),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        url = res.stdout.strip()
+        m = re.search(r"github\.com[:/]([^/]+/[^/]+?)(?:\.git)?$", url)
+        if m:
+            return m.group(1)
+    except Exception:
+        pass
+    return None
+
+
+def update_readme_content(
+    original_readme: str,
+    new_analytics_section: str,
+    repo_name: str = "shivampimple29/Intelligent-Data-System-sem5",
+    repo_title: Optional[str] = None,
+    repo_desc: Optional[str] = None,
+) -> str:
     """
     Safely replace the analytics section between START_MARKER and END_MARKER.
     Removes any duplicated Copyright section completely (covered by LICENSE).
@@ -1190,11 +1242,11 @@ def update_readme_content(original_readme: str, new_analytics_section: str) -> s
         "### Support & Contribute\n\n"
         "If this repository helps your studies, practicals, or reference work, support the project:\n\n"
         '<p align="left">\n'
-        '  <a href="https://github.com/shivampimple29/Intelligent-Data-System-sem5/stargazers">\n'
+        f'  <a href="https://github.com/{repo_name}/stargazers">\n'
         '    <img src=".github/analytics/assets/star.svg" alt="Star Repository" height="36" />\n'
         '  </a>\n'
         '  &nbsp;&nbsp;\n'
-        '  <a href="https://github.com/shivampimple29/Intelligent-Data-System-sem5/fork">\n'
+        f'  <a href="https://github.com/{repo_name}/fork">\n'
         '    <img src=".github/analytics/assets/fork.svg" alt="Fork Project" height="36" />\n'
         '  </a>\n'
         '  &nbsp;&nbsp;\n'
@@ -1202,13 +1254,13 @@ def update_readme_content(original_readme: str, new_analytics_section: str) -> s
         '    <img src=".github/analytics/assets/follow.svg" alt="Follow @shivampimple29" height="36" />\n'
         '  </a>\n'
         '  &nbsp;&nbsp;\n'
-        '  <a href="https://github.com/shivampimple29/Intelligent-Data-System-sem5/issues">\n'
+        f'  <a href="https://github.com/{repo_name}/issues">\n'
         '    <img src=".github/analytics/assets/doubt.svg" alt="Ask a Doubt" height="36" />\n'
         '  </a>\n'
         '</p>\n\n'
         "```bash\n"
         "# Clone this repository\n"
-        "git clone https://github.com/shivampimple29/Intelligent-Data-System-sem5.git\n"
+        f"git clone https://github.com/{repo_name}.git\n"
         "```"
     )
 
@@ -1221,6 +1273,17 @@ def update_readme_content(original_readme: str, new_analytics_section: str) -> s
     )
     cleaned = re.sub(r"(\n\s*---\s*)+\Z", "", cleaned.rstrip())
 
+    # Resolve repo metadata
+    repo_slug = repo_name.split("/")[-1] if "/" in repo_name else repo_name
+    if not repo_title or not repo_desc:
+        meta = REPO_METADATA.get(repo_slug)
+        if meta:
+            repo_title = repo_title or meta[0]
+            repo_desc = repo_desc or meta[1]
+        else:
+            repo_title = repo_title or repo_slug.replace("-", " ").replace("_", " ").title()
+            repo_desc = repo_desc or f"Practical solutions, lab experiments, and reference implementations for {repo_title}."
+
     # 3. Replace or insert analytics block
     marker_pattern = re.compile(f"{re.escape(START_MARKER)}.*?{re.escape(END_MARKER)}", re.DOTALL)
     if marker_pattern.search(cleaned):
@@ -1232,7 +1295,7 @@ def update_readme_content(original_readme: str, new_analytics_section: str) -> s
             rest = "\n".join(lines[1:]).strip()
             cleaned = f"{title}\n\n{new_analytics_section}\n\n{rest}"
         else:
-            cleaned = f"# Intelligent Data Systems\n\n{new_analytics_section}\n\n{cleaned}"
+            cleaned = f"# {repo_title}\n\n{repo_desc}\n\n{new_analytics_section}\n\n{cleaned}"
 
     # Ensure clean trailing support section
     cleaned = cleaned.strip()
@@ -1250,7 +1313,11 @@ def update_readme_content(original_readme: str, new_analytics_section: str) -> s
 def run_pipeline() -> int:
     """Execute the full analytics collection and dashboard generation pipeline."""
     workspace_root = Path(os.environ.get("GITHUB_WORKSPACE") or Path(__file__).resolve().parents[2])
-    repo_name = os.environ.get("GITHUB_REPOSITORY") or "shivampimple29/Intelligent-Data-System-sem5"
+    repo_name = (
+        os.environ.get("GITHUB_REPOSITORY")
+        or get_git_remote_repo_name(workspace_root)
+        or "shivampimple29/Intelligent-Data-System-sem5"
+    )
     default_branch = os.environ.get("GITHUB_REF_NAME") or "main"
     if default_branch.startswith("refs/heads/"):
         default_branch = default_branch.replace("refs/heads/", "")
@@ -1321,6 +1388,10 @@ def run_pipeline() -> int:
     traffic_history = safe_load_json(traffic_history_file, initialize_traffic_history)
     merge_traffic_data(traffic_history, clones_payload, views_payload, now_utc_iso)
     atomic_write_json(traffic_history_file, traffic_history)
+
+    activity_history = safe_load_json(activity_history_file, initialize_activity_history)
+    activity_history["lastUpdated"] = now_utc_iso
+    atomic_write_json(activity_history_file, activity_history)
 
     traffic_metrics = compute_traffic_metrics(traffic_history)
 
@@ -1427,7 +1498,7 @@ def run_pipeline() -> int:
         supporters=supporters,
     )
 
-    updated_readme = update_readme_content(existing_readme, new_section)
+    updated_readme = update_readme_content(existing_readme, new_section, repo_name=repo_name)
     atomic_write_text(readme_path, updated_readme)
 
     print("\n=== Analytics Pipeline Completed Successfully ===")
